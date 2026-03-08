@@ -1,0 +1,73 @@
+{
+  "name": "@satianurag/hiero-mirror-client",
+  "version": "0.0.0",
+  "description": "Standalone TypeScript client for the Hedera/Hiero Mirror Node REST API",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.mjs",
+      "require": "./dist/utils.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "postbuild": "cp dist/index.d.mts dist/index.d.ts && cp dist/utils.d.mts dist/utils.d.ts",
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:integration": "vitest run tests/integration/",
+    "api-report": "api-extractor run --local --verbose",
+    "api-report:ci": "api-extractor run",
+    "generate:spec": "curl -o openapi.yml https://testnet.mirrornode.hedera.com/api/v1/docs/openapi.yml",
+    "generate:types": "npx openapi-typescript openapi.yml -o src/generated/types.ts",
+    "generate": "npm run generate:spec && npm run generate:types",
+    "check:drift": "npx openapi-typescript openapi.yml -o src/generated/types.ts --check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Satianurag/hiero-mirror-client.git"
+  },
+  "keywords": [
+    "hedera",
+    "hiero",
+    "mirror-node",
+    "blockchain",
+    "sdk",
+    "typescript"
+  ],
+  "author": "satianurag",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Satianurag/hiero-mirror-client/issues"
+  },
+  "homepage": "https://github.com/Satianurag/hiero-mirror-client#readme",
+  "dependencies": {
+    "lossless-json": "^4.0.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@changesets/cli": "^2.28.1",
+    "@microsoft/api-extractor": "^7.52.8",
+    "openapi-typescript": "^7.6.1",
+    "tsdown": "^0.12.5",
+    "typescript": "^5.7.3",
+    "vitest": "^3.1.1"
+  }
+}

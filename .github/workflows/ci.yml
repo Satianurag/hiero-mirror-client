@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Lint & Format
+        run: npx biome check .
+
+      - name: Type Check
+        run: npx tsc --noEmit
+
+      - name: Unit Tests
+        run: npx vitest run
+
+      - name: Build
+        run: npm run build
+
+      - name: API Surface Check
+        if: matrix.node-version == 22
+        run: npx api-extractor run
+
+      - name: Verify CJS Import
+        run: node -e "require('./dist/index.cjs')"
+
+      - name: Verify ESM Import
+        run: node --input-type=module -e "import('./dist/index.mjs')"
