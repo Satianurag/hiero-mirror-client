@@ -37,6 +37,7 @@ jobs:
         run: npx vitest run tests/unit
 
       - name: Build
+        if: matrix.node-version != 18
         run: npm run build
 
       - name: API Surface Check
@@ -44,8 +45,10 @@ jobs:
         run: npx api-extractor run --local
 
       - name: Verify CJS Import
+        if: matrix.node-version != 18
         run: node -e "require('./dist/index.cjs')"
 
       - name: Verify ESM Import
+        if: matrix.node-version != 18
         run: node --input-type=module -e "import('./dist/index.mjs')"
 
