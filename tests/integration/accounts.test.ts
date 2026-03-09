@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { client, INTEGRATION_TIMEOUT, KNOWN_ACCOUNT, KNOWN_TOKEN_HOLDER } from './setup.js';
+import { INTEGRATION_TIMEOUT, KNOWN_ACCOUNT, KNOWN_TOKEN_HOLDER, client } from './setup.js';
 
 describe('Accounts Integration', { timeout: INTEGRATION_TIMEOUT }, () => {
   it('should list accounts with pagination', async () => {

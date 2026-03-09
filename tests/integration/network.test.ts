@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { client, INTEGRATION_TIMEOUT } from './setup.js';
+import { INTEGRATION_TIMEOUT, client } from './setup.js';
 
 describe('Network Integration', { timeout: INTEGRATION_TIMEOUT }, () => {
   it('should get network stake with string int64 fields (EC36)', async () => {

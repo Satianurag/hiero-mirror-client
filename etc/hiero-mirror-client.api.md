@@ -61,7 +61,7 @@ export interface AccountRewardsParams {
     timestamp?: string | OperatorFilter<string>;
 }
 
-// @public (undocumented)
+// @public
 export interface AccountSummary {
     // (undocumented)
     account: string;

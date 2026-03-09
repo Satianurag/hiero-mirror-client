@@ -5,7 +5,7 @@
 
 import type { HttpClient } from '../http/client.js';
 import { mapSchedule } from '../mappers/schedule.js';
-import { createPageExtractor, Paginator } from '../pagination/paginator.js';
+import { Paginator, createPageExtractor } from '../pagination/paginator.js';
 import type { Schedule, ScheduleListParams } from '../types/schedules.js';
 
 export class SchedulesResource {

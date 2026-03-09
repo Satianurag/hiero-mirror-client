@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { client, INTEGRATION_TIMEOUT } from './setup.js';
+import { INTEGRATION_TIMEOUT, client } from './setup.js';
 
 describe('Tokens Integration', { timeout: INTEGRATION_TIMEOUT }, () => {
   let knownTokenId: string;
