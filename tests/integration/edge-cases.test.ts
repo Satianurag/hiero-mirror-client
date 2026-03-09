@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { HieroError } from '../../src/errors/HieroError.js';
 import { HieroNotFoundError } from '../../src/errors/HieroNotFoundError.js';
-import { client, INTEGRATION_TIMEOUT } from './setup.js';
+import { INTEGRATION_TIMEOUT, client } from './setup.js';
 
 describe('Edge Cases Integration', { timeout: INTEGRATION_TIMEOUT }, () => {
   it('should throw HieroNotFoundError for non-existent account (EC47)', async () => {

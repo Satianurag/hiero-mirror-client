@@ -5,7 +5,7 @@
 
 import type { HttpClient } from '../http/client.js';
 import { mapBlock } from '../mappers/block.js';
-import { createPageExtractor, Paginator } from '../pagination/paginator.js';
+import { Paginator, createPageExtractor } from '../pagination/paginator.js';
 import type { Block, BlockListParams } from '../types/blocks.js';
 
 export class BlocksResource {

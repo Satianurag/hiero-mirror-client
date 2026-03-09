@@ -11,7 +11,7 @@ import {
   mapTokenSummary,
 } from '../mappers/token.js';
 import { mapNftTransaction } from '../mappers/transaction.js';
-import { createPageExtractor, Paginator } from '../pagination/paginator.js';
+import { Paginator, createPageExtractor } from '../pagination/paginator.js';
 import type {
   TokenBalanceEntry,
   TokenBalanceParams,

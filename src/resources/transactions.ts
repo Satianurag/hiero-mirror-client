@@ -8,7 +8,7 @@
 
 import type { HttpClient } from '../http/client.js';
 import { mapTransaction, unwrapTransaction } from '../mappers/transaction.js';
-import { createPageExtractor, Paginator } from '../pagination/paginator.js';
+import { Paginator, createPageExtractor } from '../pagination/paginator.js';
 import type {
   Transaction,
   TransactionGetParams,

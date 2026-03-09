@@ -15,7 +15,7 @@ import {
   mapTokenRelationship,
 } from '../mappers/account.js';
 import { mapTokenNft } from '../mappers/token.js';
-import { createPageExtractor, Paginator } from '../pagination/paginator.js';
+import { Paginator, createPageExtractor } from '../pagination/paginator.js';
 import type {
   AccountDetail,
   AccountListParams,

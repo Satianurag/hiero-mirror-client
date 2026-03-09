@@ -11,7 +11,7 @@ import {
   mapNetworkStake,
   mapSupply,
 } from '../mappers/network.js';
-import { createPageExtractor, Paginator } from '../pagination/paginator.js';
+import { Paginator, createPageExtractor } from '../pagination/paginator.js';
 import type {
   ExchangeRateSet,
   FeeSchedule,
