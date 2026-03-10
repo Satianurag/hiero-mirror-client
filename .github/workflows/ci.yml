@@ -47,5 +47,13 @@ jobs:
         run: node -e "require('./dist/index.cjs')"
 
       - name: Verify ESM Import
-        run: node --input-type=module -e "import('./dist/index.mjs')"
+        run: |
+          node --input-type=module -e '
+            import("./dist/index.mjs")
+              .then(() => console.log("✅ ESM import successful"))
+              .catch(err => {
+                console.error("❌ ESM import failed:", err);
+                process.exit(1);
+              });
+          '
 
