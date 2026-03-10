@@ -12,6 +12,9 @@ import type { HieroKey, OperatorFilter, Order } from './common.js';
 // Schedule (same type for list and detail, EC58)
 // ---------------------------------------------------------------------------
 
+/**
+ * A scheduled transaction on the Hedera network.
+ */
 export interface Schedule {
   admin_key: HieroKey | null;
   consensus_timestamp: string | null;
@@ -27,6 +30,9 @@ export interface Schedule {
   wait_for_expiry: boolean;
 }
 
+/**
+ * Signature provided for a scheduled transaction.
+ */
 export interface ScheduleSignature {
   consensus_timestamp: string;
   public_key_prefix: string;
@@ -38,6 +44,9 @@ export interface ScheduleSignature {
 // Query parameter types
 // ---------------------------------------------------------------------------
 
+/**
+ * Query parameters for listing schedules.
+ */
 export interface ScheduleListParams {
   'account.id'?: string | OperatorFilter<string>;
   limit?: number;

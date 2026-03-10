@@ -59,20 +59,19 @@ export class RateLimiter {
         return;
       }
 
+      const onAbort = () => {
+        clearTimeout(timer);
+        reject(signal!.reason);
+      };
+
       const timer = setTimeout(() => {
+        signal?.removeEventListener('abort', onAbort);
         this.refill();
         this.tokens -= 1;
         resolve();
       }, waitMs);
 
-      signal?.addEventListener(
-        'abort',
-        () => {
-          clearTimeout(timer);
-          reject(signal.reason);
-        },
-        { once: true },
-      );
+      signal?.addEventListener('abort', onAbort, { once: true });
     });
   }
 

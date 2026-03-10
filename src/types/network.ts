@@ -40,6 +40,9 @@ export interface NetworkNode {
   timestamp: TimestampRange;
 }
 
+/**
+ * Network service endpoint (IP/port/domain).
+ */
 export interface ServiceEndpoint {
   ip_address_v4: string;
   port: number;
@@ -76,12 +79,18 @@ export interface NetworkStake {
 // Exchange Rate
 // ---------------------------------------------------------------------------
 
+/**
+ * HBAR-to-cent exchange rate at a specific point in time.
+ */
 export interface ExchangeRate {
   cent_equivalent: number;
   expiration_time: number;
   hbar_equivalent: number;
 }
 
+/**
+ * Current and next exchange rates.
+ */
 export interface ExchangeRateSet {
   current_rate: ExchangeRate;
   next_rate: ExchangeRate;
@@ -92,6 +101,9 @@ export interface ExchangeRateSet {
 // Supply (EC57 — already strings from API)
 // ---------------------------------------------------------------------------
 
+/**
+ * HBAR supply information.
+ */
 export interface Supply {
   released_supply: string;
   timestamp: string;
@@ -102,11 +114,17 @@ export interface Supply {
 // Fee Schedule
 // ---------------------------------------------------------------------------
 
+/**
+ * Network transaction fee details.
+ */
 export interface Fee {
   gas: string;
   transaction_type: string;
 }
 
+/**
+ * Network fee schedule.
+ */
 export interface FeeSchedule {
   current?: Fee[];
   next?: Fee[];
@@ -117,6 +135,9 @@ export interface FeeSchedule {
 // Query parameter types
 // ---------------------------------------------------------------------------
 
+/**
+ * Query parameters for listing network nodes.
+ */
 export interface NetworkNodeParams {
   /** EC59: `file_id` is rejected by server. Not included. */
   limit?: number;
@@ -124,11 +145,17 @@ export interface NetworkNodeParams {
   order?: Order;
 }
 
+/**
+ * Query parameters for fetching network fees.
+ */
 export interface NetworkFeeParams {
   order?: Order;
   timestamp?: string | OperatorFilter<string>;
 }
 
+/**
+ * Query parameters for fetching network supply.
+ */
 export interface NetworkSupplyParams {
   timestamp?: string | OperatorFilter<string>;
 }

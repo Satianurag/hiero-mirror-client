@@ -13,11 +13,17 @@ import type { HieroKey, OperatorFilter, Order, TokenType } from './common.js';
 // Custom fee structures (EC26/73)
 // ---------------------------------------------------------------------------
 
+/**
+ * A fractional fee amount.
+ */
 export interface FractionAmount {
   numerator: number;
   denominator: number;
 }
 
+/**
+ * A fixed fee evaluated at transfer time.
+ */
 export interface FixedFee {
   all_collectors_are_exempt: boolean;
   amount: string;
@@ -25,6 +31,9 @@ export interface FixedFee {
   denominating_token_id: string | null;
 }
 
+/**
+ * A fractional fee evaluated at transfer time.
+ */
 export interface FractionalFee {
   all_collectors_are_exempt: boolean;
   amount: FractionAmount;
@@ -35,6 +44,9 @@ export interface FractionalFee {
   net_of_transfers: boolean;
 }
 
+/**
+ * A royalty fee applied to NFT transfers.
+ */
 export interface RoyaltyFee {
   all_collectors_are_exempt: boolean;
   amount: FractionAmount;
@@ -42,6 +54,9 @@ export interface RoyaltyFee {
   fallback_fee: FixedFee | null;
 }
 
+/**
+ * Custom fees configuration for a token.
+ */
 export interface CustomFees {
   created_timestamp: string;
   fixed_fees: FixedFee[];
@@ -53,6 +68,9 @@ export interface CustomFees {
 // Token Summary (list endpoint — 7 keys, EC23)
 // ---------------------------------------------------------------------------
 
+/**
+ * Summary of a token returned by list endpoints.
+ */
 export interface TokenSummary {
   admin_key: HieroKey | null;
   /** EC14/88: Always `string`, even though list returns `number`. */
@@ -68,6 +86,10 @@ export interface TokenSummary {
 // Token Detail (detail endpoint — 29 keys, EC23)
 // ---------------------------------------------------------------------------
 
+/**
+ * Detailed token information returned by detail endpoints.
+ * Includes custom fees and key configuration.
+ */
 export interface TokenDetail extends TokenSummary {
   auto_renew_account: string | null;
   auto_renew_period: string | null;
@@ -97,6 +119,9 @@ export interface TokenDetail extends TokenSummary {
 // Token NFT
 // ---------------------------------------------------------------------------
 
+/**
+ * Metadata and state of a single Non-Fungible Token (NFT).
+ */
 export interface TokenNft {
   account_id: string;
   created_timestamp: string;
@@ -113,12 +138,18 @@ export interface TokenNft {
 // Token Balance (from `/tokens/{id}/balances`)
 // ---------------------------------------------------------------------------
 
+/**
+ * Balance entry for a specific token held by an account.
+ */
 export interface TokenBalanceEntry {
   account: string;
   balance: string;
   decimals: string;
 }
 
+/**
+ * Response containing token balances.
+ */
 export interface TokenBalanceResponse {
   /** EC134: Can be null. */
   timestamp: string | null;
@@ -130,6 +161,9 @@ export interface TokenBalanceResponse {
 // Query parameter types
 // ---------------------------------------------------------------------------
 
+/**
+ * Query parameters for listing tokens.
+ */
 export interface TokenListParams {
   'account.id'?: string;
   limit?: number;
@@ -141,6 +175,9 @@ export interface TokenListParams {
   type?: TokenType;
 }
 
+/**
+ * Query parameters for listing NFTs of a token.
+ */
 export interface TokenNftListParams {
   'account.id'?: string | OperatorFilter<string>;
   limit?: number;
@@ -149,6 +186,9 @@ export interface TokenNftListParams {
   serialnumber?: number;
 }
 
+/**
+ * Query parameters for listing accounts that hold a specific token.
+ */
 export interface TokenBalanceParams {
   'account.id'?: string | OperatorFilter<string>;
   timestamp?: string | OperatorFilter<string>;

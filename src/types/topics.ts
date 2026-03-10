@@ -31,6 +31,9 @@ export interface TopicMessage {
 // Chunk Info (for HCS chunked messages)
 // ---------------------------------------------------------------------------
 
+/**
+ * Chunking metadata for large HCS messages broken into multiple parts.
+ */
 export interface ChunkInfo {
   initial_transaction_id: {
     account_id: string;
@@ -46,6 +49,9 @@ export interface ChunkInfo {
 // Topic Info (from `/topics/{id}`)
 // ---------------------------------------------------------------------------
 
+/**
+ * Configuration and state for a Hedera Consensus Service topic.
+ */
 export interface TopicInfo {
   admin_key: unknown | null;
   auto_renew_account: string | null;
@@ -62,6 +68,9 @@ export interface TopicInfo {
 // Query parameter types
 // ---------------------------------------------------------------------------
 
+/**
+ * Query parameters for listing topic messages.
+ */
 export interface TopicMessageParams {
   /** EC44/72: `'base64'` (default) or `'utf-8'`. */
   encoding?: 'base64' | 'utf-8';
@@ -71,6 +80,9 @@ export interface TopicMessageParams {
   timestamp?: string | OperatorFilter<string>;
 }
 
+/**
+ * Options for streaming real-time messages from a topic.
+ */
 export interface TopicStreamOptions {
   /** Starting timestamp cursor. Default: `'now'`. */
   startTimestamp?: string;

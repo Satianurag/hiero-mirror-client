@@ -21,6 +21,9 @@ import type {
 // Transaction (from /transactions)
 // ---------------------------------------------------------------------------
 
+/**
+ * Full details of a transaction executed on the network.
+ */
 export interface Transaction {
   bytes: string | null;
   charged_tx_fee: string;
@@ -71,6 +74,9 @@ export interface NftTransaction {
 // Query parameter types
 // ---------------------------------------------------------------------------
 
+/**
+ * Query parameters for listing transactions.
+ */
 export interface TransactionListParams {
   'account.id'?: string | OperatorFilter<string>;
   limit?: number;

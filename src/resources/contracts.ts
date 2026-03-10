@@ -145,10 +145,39 @@ export class ContractsResource {
     });
   }
 
-  async getOpcodes(transactionIdOrHash: string): Promise<unknown> {
+  async getOpcodes(transactionIdOrHash: string): Promise<OpcodeResponse> {
     const response = await this.client.get<unknown>(
       `/api/v1/contracts/results/${encodeURIComponent(transactionIdOrHash)}/opcodes`,
     );
-    return response.data;
+    return response.data as OpcodeResponse;
   }
+}
+
+/**
+ * Response from the opcodes endpoint.
+ */
+export interface OpcodeResponse {
+  /** Array of opcode entries for the transaction. */
+  opcodes: OpcodeEntry[];
+}
+
+export interface OpcodeEntry {
+  /** Program counter position. */
+  pc: number;
+  /** EVM opcode name (e.g., "PUSH1", "SSTORE"). */
+  op: string;
+  /** Gas remaining at this step. */
+  gas: number;
+  /** Gas cost of this opcode. */
+  gasCost: number;
+  /** Stack depth. */
+  depth: number;
+  /** Stack contents (hex strings). */
+  stack?: string[];
+  /** Memory contents (hex strings). */
+  memory?: string[];
+  /** Storage changes. */
+  storage?: Record<string, string>;
+  /** Reason string if the opcode reverted. */
+  reason?: string;
 }

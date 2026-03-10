@@ -16,7 +16,7 @@
 import { HieroNetworkError } from '../errors/HieroNetworkError.js';
 import { HieroTimeoutError } from '../errors/HieroTimeoutError.js';
 import { createErrorFromResponse, createParseError } from '../errors/factory.js';
-import { ETagCache } from './etag-cache.js';
+import { ETagCache, type ETagCacheOptions } from './etag-cache.js';
 import { safeJsonParse } from './json-parser.js';
 import { RateLimiter } from './rate-limiter.js';
 import {
@@ -29,6 +29,12 @@ import {
 } from './retry.js';
 import { type QueryParams, buildUrl } from './url-builder.js';
 
+/**
+ * Logger re-exported from types for internal use.
+ */
+export type { Logger } from '../types/common.js';
+import type { Logger } from '../types/common.js';
+
 export interface HttpClientOptions {
   /** Base URL for the mirror node. */
   baseUrl: string;
@@ -38,17 +44,12 @@ export interface HttpClientOptions {
   retry?: Partial<RetryOptions>;
   /** Rate limit in requests per second. Default: 50. */
   rateLimitRps?: number;
+  /** ETag cache options. */
+  etagCache?: ETagCacheOptions;
   /** Optional logger for debug output. */
   logger?: Logger;
   /** Custom fetch implementation (for testing). */
   fetch?: typeof globalThis.fetch;
-}
-
-export interface Logger {
-  debug?: (message: string, ...args: unknown[]) => void;
-  info?: (message: string, ...args: unknown[]) => void;
-  warn?: (message: string, ...args: unknown[]) => void;
-  error?: (message: string, ...args: unknown[]) => void;
 }
 
 export interface RequestOptions {
@@ -84,7 +85,7 @@ export class HttpClient {
     this.timeout = options.timeout ?? 30_000;
     this.retryOptions = { ...DEFAULT_RETRY_OPTIONS, ...options.retry };
     this.rateLimiter = new RateLimiter(options.rateLimitRps ?? 50);
-    this.etagCache = new ETagCache();
+    this.etagCache = new ETagCache(options.etagCache);
     this.logger = options.logger ?? {};
     this.fetchFn = options.fetch ?? globalThis.fetch.bind(globalThis);
   }
@@ -164,17 +165,13 @@ export class HttpClient {
         // Rate limiting
         await this.rateLimiter.acquire(options?.signal);
 
-        // Timeout via AbortController
+        // Compose abort signal: user signal + timeout (native, no timer leaks)
         const timeoutMs = options?.timeout ?? this.timeout;
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-        // Compose abort signals: user signal + timeout
+        const signals: AbortSignal[] = [AbortSignal.timeout(timeoutMs)];
         if (options?.signal) {
-          options.signal.addEventListener('abort', () => controller.abort(options.signal?.reason), {
-            once: true,
-          });
+          signals.push(options.signal);
         }
+        const composedSignal = AbortSignal.any(signals);
 
         try {
           const headers: Record<string, string> = {
@@ -193,21 +190,23 @@ export class HttpClient {
             method,
             headers,
             body: body !== undefined ? JSON.stringify(body) : undefined,
-            signal: controller.signal,
+            signal: composedSignal,
           });
 
-          clearTimeout(timeoutId);
           return await this.handleResponse<T>(response, url, attempt);
         } catch (error) {
-          clearTimeout(timeoutId);
+          // Check if this was a timeout (AbortSignal.timeout fires TimeoutError)
+          if (error instanceof DOMException && error.name === 'TimeoutError') {
+            throw new HieroTimeoutError(timeoutMs);
+          }
 
-          // Check if this was a timeout
+          // Check if this was a user abort
           if (
             error instanceof DOMException &&
             error.name === 'AbortError' &&
-            !options?.signal?.aborted
+            options?.signal?.aborted
           ) {
-            throw new HieroTimeoutError(timeoutMs);
+            throw error;
           }
 
           throw error;
@@ -263,9 +262,8 @@ export class HttpClient {
     url: string,
     _attempt: number,
   ): Promise<HttpResponse<T>> {
-    const rawBody = await response.text();
-
-    // EC145: 304 Not Modified — return cached body
+    // EC145: 304 Not Modified — return cached body immediately.
+    // Skip response.text() entirely since the 304 body is empty/irrelevant.
     if (response.status === 304) {
       const cachedBody = this.etagCache.getCachedBody(url);
       this.logger.debug?.(`[HTTP] 304 Not Modified — returning cached body for ${url}`);
@@ -276,16 +274,29 @@ export class HttpClient {
       };
     }
 
+    // 204 No Content — no body to read.
+    if (response.status === 204) {
+      return {
+        data: null as T,
+        status: 204,
+        headers: response.headers,
+      };
+    }
+
+    // We MUST use response.text() + safeJsonParse() (not response.json()) because
+    // we need a custom reviver to preserve int64 precision (TC39 context.source).
+    const rawBody = await response.text();
+
     // Check Content-Type before parsing (EC153)
     const contentType = response.headers.get('content-type') ?? '';
     const isJson = contentType.includes('application/json') || contentType.includes('text/json');
 
     if (!response.ok) {
-      // Try to parse error body as JSON
+      // Try to parse error body as JSON (using safeJsonParse for consistency)
       let parsedBody: unknown = null;
       if (isJson && rawBody) {
         try {
-          parsedBody = JSON.parse(rawBody);
+          parsedBody = safeJsonParse(rawBody);
         } catch {
           // Non-JSON error response (EC153: text/html)
         }
@@ -305,8 +316,8 @@ export class HttpClient {
       throw createParseError(rawBody, response.status);
     }
 
-    // 204 No Content
-    if (response.status === 204 || !rawBody) {
+    // Empty body on other success statuses
+    if (!rawBody) {
       return {
         data: null as T,
         status: response.status,

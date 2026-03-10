@@ -34,6 +34,9 @@ export interface Block {
 // Query parameter types
 // ---------------------------------------------------------------------------
 
+/**
+ * Query parameters for listing blocks.
+ */
 export interface BlockListParams {
   /** EC90: Supports hex string block IDs in query. */
   'block.number'?: number | string | OperatorFilter<number | string>;

@@ -24,13 +24,15 @@ export interface TopicStreamOptions {
  *
  * - Polls at high frequency (500ms) when messages are flowing.
  * - Backs off exponentially (up to 5s) when no messages arrive.
- * - Cancellable via `AbortController`.
+ * - Cancellable via `AbortController` or `await using`.
  * - Rate-limit aware (shares the HttpClient's token bucket).
  */
-export class TopicStream implements AsyncIterable<TopicMessage> {
+export class TopicStream implements AsyncIterable<TopicMessage>, AsyncDisposable {
   private readonly client: HttpClient;
   private readonly topicId: string;
   private readonly options: Required<Omit<TopicStreamOptions, 'signal'>> & { signal?: AbortSignal };
+  private readonly internalController: AbortController;
+  private readonly composedSignal: AbortSignal;
 
   /** Minimum polling interval (ms). */
   private static readonly MIN_INTERVAL = 500;
@@ -42,19 +44,27 @@ export class TopicStream implements AsyncIterable<TopicMessage> {
   constructor(client: HttpClient, topicId: string, options: TopicStreamOptions = {}) {
     this.client = client;
     this.topicId = topicId;
+    this.internalController = new AbortController();
     this.options = {
       startTimestamp: options.startTimestamp ?? Math.floor(Date.now() / 1000).toString(),
       interval: options.interval ?? TopicStream.MIN_INTERVAL,
       limit: options.limit ?? 100,
       signal: options.signal,
     };
+
+    // Compose external signal (if any) with internal controller
+    const signals: AbortSignal[] = [this.internalController.signal];
+    if (options.signal) {
+      signals.push(options.signal);
+    }
+    this.composedSignal = AbortSignal.any(signals);
   }
 
   async *[Symbol.asyncIterator](): AsyncIterator<TopicMessage> {
     let cursor = this.options.startTimestamp;
     let currentInterval = this.options.interval;
 
-    while (!this.options.signal?.aborted) {
+    while (!this.composedSignal.aborted) {
       try {
         const response = await this.client.get<unknown>(
           `/api/v1/topics/${this.topicId}/messages`,
@@ -63,7 +73,7 @@ export class TopicStream implements AsyncIterable<TopicMessage> {
             limit: String(this.options.limit),
             order: 'asc',
           },
-          { signal: this.options.signal },
+          { signal: this.composedSignal },
         );
 
         const raw = response.data as Record<string, unknown>;
@@ -87,7 +97,7 @@ export class TopicStream implements AsyncIterable<TopicMessage> {
         }
       } catch (_error: unknown) {
         // On abort, exit gracefully.
-        if (this.options.signal?.aborted) return;
+        if (this.composedSignal.aborted) return;
 
         // On network errors, back off and retry.
         currentInterval = Math.min(
@@ -101,11 +111,19 @@ export class TopicStream implements AsyncIterable<TopicMessage> {
     }
   }
 
+  // --------------------------------------------------------------------------
+  // AsyncDisposable — `await using` support
+  // --------------------------------------------------------------------------
+
+  async [Symbol.asyncDispose](): Promise<void> {
+    this.internalController.abort();
+  }
+
   private sleep(ms: number): Promise<void> {
     return new Promise<void>((resolve) => {
       const timer = setTimeout(resolve, ms);
       // If the signal aborts, resolve immediately.
-      this.options.signal?.addEventListener(
+      this.composedSignal.addEventListener(
         'abort',
         () => {
           clearTimeout(timer);

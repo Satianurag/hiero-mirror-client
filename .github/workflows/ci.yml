@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20, 22]
+        node-version: [22, 24]
     
     steps:
       - uses: actions/checkout@v4
@@ -39,9 +39,13 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Bundle Size Check
+        if: matrix.node-version == 24
+        run: npx size-limit
+
       - name: API Surface Check
         if: matrix.node-version == 22
-        run: npx api-extractor run --local
+        run: npx api-extractor run
 
       - name: Verify CJS Import
         run: node -e "require('./dist/index.cjs')"
@@ -49,3 +53,23 @@ jobs:
       - name: Verify ESM Import
         run: node --input-type=module -e "import('./dist/index.mjs')"
 
+  integration:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: check
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Integration Tests (Testnet)
+        run: npx vitest run tests/integration/ --reporter=verbose
+        env:
+          MIRROR_NODE_URL: https://testnet.mirrornode.hedera.com
+        timeout-minutes: 5

@@ -46,6 +46,8 @@ export interface PaginatorOptions<T> {
   params?: Record<string, unknown>;
   /** Mapper function: raw JSON → Page<T>. */
   extract: PageExtractor<T>;
+  /** Optional abort signal for cancellation. */
+  signal?: AbortSignal;
 }
 
 /**
@@ -58,17 +60,19 @@ export interface PaginatorOptions<T> {
  * EC47: Terminates when `links.next` is null.
  * EC8: Resolves relative `links.next` URLs against the base URL.
  */
-export class Paginator<T> implements PromiseLike<Page<T>>, AsyncIterable<T> {
+export class Paginator<T> implements PromiseLike<Page<T>>, AsyncIterable<T>, AsyncDisposable {
   private readonly client: HttpClient;
   private readonly initialPath: string;
   private readonly params?: Record<string, unknown>;
   private readonly extract: PageExtractor<T>;
+  private readonly signal?: AbortSignal;
 
   constructor(options: PaginatorOptions<T>) {
     this.client = options.client;
     this.initialPath = options.path;
     this.params = options.params;
     this.extract = options.extract;
+    this.signal = options.signal;
   }
 
   // --------------------------------------------------------------------------
@@ -107,8 +111,10 @@ export class Paginator<T> implements PromiseLike<Page<T>>, AsyncIterable<T> {
 
     while (nextPath != null) {
       const response: HttpResponse<unknown> = isFirst
-        ? await this.client.get(nextPath, this.params as Record<string, string>)
-        : await this.client.get(nextPath);
+        ? await this.client.get(nextPath, this.params as Record<string, string>, {
+            signal: this.signal,
+          })
+        : await this.client.get(nextPath, undefined, { signal: this.signal });
 
       isFirst = false;
 
@@ -143,8 +149,37 @@ export class Paginator<T> implements PromiseLike<Page<T>>, AsyncIterable<T> {
     const response = await this.client.get<unknown>(
       this.initialPath,
       this.params as Record<string, string>,
+      { signal: this.signal },
     );
     return this.extract(response.data);
+  }
+
+  // --------------------------------------------------------------------------
+  // Convenience methods
+  // --------------------------------------------------------------------------
+
+  /**
+   * Collects all items across all pages into a single array.
+   *
+   * @param options - Optional configuration
+   * @param options.maxItems - Maximum number of items to collect (default: unlimited)
+   * @returns All items concatenated from every page
+   */
+  async toArray(options?: { maxItems?: number }): Promise<T[]> {
+    const items: T[] = [];
+    for await (const item of this) {
+      items.push(item);
+      if (options?.maxItems && items.length >= options.maxItems) break;
+    }
+    return items;
+  }
+
+  // --------------------------------------------------------------------------
+  // AsyncDisposable — `await using` support
+  // --------------------------------------------------------------------------
+
+  async [Symbol.asyncDispose](): Promise<void> {
+    // No-op for now; future: cancel any ongoing requests
   }
 }
 

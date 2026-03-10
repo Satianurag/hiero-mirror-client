@@ -28,6 +28,9 @@ export interface BalanceEntry {
 // Query parameter types
 // ---------------------------------------------------------------------------
 
+/**
+ * Query parameters for listing token balances.
+ */
 export interface BalanceListParams {
   'account.id'?: string | OperatorFilter<string>;
   'account.publickey'?: string;

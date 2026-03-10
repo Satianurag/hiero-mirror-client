@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "description": "Standalone TypeScript client for the Hedera/Hiero Mirror Node REST API",
   "type": "module",
+  "sideEffects": false,
+  "packageManager": "npm@9.2.0",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "exports": {
     ".": {
@@ -36,8 +38,19 @@
     "generate:spec": "curl -o openapi.yml https://testnet.mirrornode.hedera.com/api/v1/docs/openapi.yml",
     "generate:types": "npx openapi-typescript openapi.yml -o src/generated/types.ts",
     "generate": "npm run generate:spec && npm run generate:types",
-    "check:drift": "npx openapi-typescript openapi.yml -o src/generated/types.ts --check"
+    "check:drift": "npx openapi-typescript openapi.yml -o src/generated/types.ts --check",
+    "size": "size-limit"
   },
+  "size-limit": [
+    {
+      "path": "dist/index.mjs",
+      "limit": "25 kB"
+    },
+    {
+      "path": "dist/utils.mjs",
+      "limit": "5 kB"
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Satianurag/hiero-mirror-client.git"
@@ -56,9 +69,11 @@
     "@biomejs/biome": "^1.9.4",
     "@changesets/cli": "^2.28.1",
     "@microsoft/api-extractor": "^7.52.8",
+    "@size-limit/file": "^12.0.1",
     "openapi-typescript": "^7.6.1",
+    "size-limit": "^12.0.1",
     "tsdown": "^0.12.5",
-    "typescript": "^5.7.3",
+    "typescript": "~5.7.3",
     "vitest": "^3.1.1"
   }
 }

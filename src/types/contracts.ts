@@ -14,6 +14,9 @@ import type { HieroKey, OperatorFilter, Order, TimestampRange } from './common.j
 // Contract Summary (list endpoint — 16 keys)
 // ---------------------------------------------------------------------------
 
+/**
+ * Summary of a smart contract returned by list endpoints.
+ */
 export interface ContractSummary {
   admin_key: HieroKey | null;
   auto_renew_account: string | null;
@@ -37,6 +40,10 @@ export interface ContractSummary {
 // Contract Detail (detail endpoint — 18 keys, adds bytecode fields)
 // ---------------------------------------------------------------------------
 
+/**
+ * Detailed smart contract information returned by detail endpoints.
+ * Includes bytecode.
+ */
 export interface ContractDetail extends ContractSummary {
   bytecode: string;
   runtime_bytecode: string;
@@ -46,6 +53,9 @@ export interface ContractDetail extends ContractSummary {
 // Contract Result (EC136 — 32 keys, widest SDK type)
 // ---------------------------------------------------------------------------
 
+/**
+ * Result of a smart contract execution (transaction).
+ */
 export interface ContractResult {
   access_list: string | null;
   address: string;
@@ -89,6 +99,9 @@ export interface ContractResult {
 // Contract Log
 // ---------------------------------------------------------------------------
 
+/**
+ * Event log emitted by a smart contract.
+ */
 export interface ContractLog {
   address: string;
   bloom: string;
@@ -109,6 +122,9 @@ export interface ContractLog {
 // State Change (EC33)
 // ---------------------------------------------------------------------------
 
+/**
+ * Storage slot state change from a contract execution.
+ */
 export interface StateChange {
   address: string;
   contract_id: string;
@@ -122,6 +138,9 @@ export interface StateChange {
 // Contract Action
 // ---------------------------------------------------------------------------
 
+/**
+ * Trace action from a contract execution.
+ */
 export interface ContractAction {
   call_depth: number;
   call_operation_type: string;
@@ -164,6 +183,9 @@ export interface ContractCallRequest {
   to: string;
 }
 
+/**
+ * Response from a contract call simulation.
+ */
 export interface ContractCallResponse {
   result: string;
 }
@@ -172,12 +194,18 @@ export interface ContractCallResponse {
 // Query parameter types
 // ---------------------------------------------------------------------------
 
+/**
+ * Query parameters for listing contracts.
+ */
 export interface ContractListParams {
   'contract.id'?: string | OperatorFilter<string>;
   limit?: number;
   order?: Order;
 }
 
+/**
+ * Query parameters for listing contract results.
+ */
 export interface ContractResultsParams {
   block_hash?: string;
   block_number?: number | OperatorFilter<number>;
@@ -189,6 +217,9 @@ export interface ContractResultsParams {
   transaction_index?: number;
 }
 
+/**
+ * Query parameters for listing contract logs.
+ */
 export interface ContractLogsParams {
   index?: number | OperatorFilter<number>;
   limit?: number;
@@ -200,6 +231,9 @@ export interface ContractLogsParams {
   topic3?: string | OperatorFilter<string>;
 }
 
+/**
+ * Query parameters for reading contract state.
+ */
 export interface ContractStateParams {
   limit?: number;
   order?: Order;

@@ -24,6 +24,9 @@ import type {
 // Account Summary (list endpoint — 18 keys)
 // ---------------------------------------------------------------------------
 
+/**
+ * Summary of an account returned by list endpoints.
+ */
 export interface AccountSummary {
   account: string;
   alias: string | null;
@@ -50,6 +53,10 @@ export interface AccountSummary {
 // Account Detail (detail endpoint — 20 keys, adds transactions + links)
 // ---------------------------------------------------------------------------
 
+/**
+ * Detailed account information returned by detail endpoints.
+ * Includes embedded recent transactions.
+ */
 export interface AccountDetail extends AccountSummary {
   /** Embedded recent transactions (sub-resource with own pagination). */
   transactions: AccountTransaction[];
@@ -75,6 +82,9 @@ export interface AccountBalance {
 // Token Relationship (from `/accounts/{id}/tokens`, EC35)
 // ---------------------------------------------------------------------------
 
+/**
+ * A token relationship for an account.
+ */
 export interface TokenRelationship {
   automatic_association: boolean;
   balance: string;
@@ -89,6 +99,9 @@ export interface TokenRelationship {
 // Staking Reward
 // ---------------------------------------------------------------------------
 
+/**
+ * A staking reward payout for an account.
+ */
 export interface StakingReward {
   account_id: string;
   amount: string;
@@ -99,6 +112,9 @@ export interface StakingReward {
 // Allowances
 // ---------------------------------------------------------------------------
 
+/**
+ * A crypto (HBAR) allowance.
+ */
 export interface CryptoAllowance {
   amount: string;
   amount_granted: string;
@@ -107,6 +123,9 @@ export interface CryptoAllowance {
   timestamp: { from: string; to: string | null };
 }
 
+/**
+ * A fungible token allowance.
+ */
 export interface TokenAllowance {
   amount: string;
   amount_granted: string;
@@ -116,6 +135,9 @@ export interface TokenAllowance {
   timestamp: { from: string; to: string | null };
 }
 
+/**
+ * A non-fungible token (NFT) allowance.
+ */
 export interface NftAllowance {
   approved_for_all: boolean;
   owner: string;
@@ -128,6 +150,9 @@ export interface NftAllowance {
 // Airdrops
 // ---------------------------------------------------------------------------
 
+/**
+ * An airdrop associated with an account.
+ */
 export interface Airdrop {
   amount: string;
   receiver_id: string;
@@ -141,6 +166,9 @@ export interface Airdrop {
 // Embedded account transaction (subset used in account detail response)
 // ---------------------------------------------------------------------------
 
+/**
+ * Embedded transaction on the account detail endpoint.
+ */
 export interface AccountTransaction {
   bytes: string | null;
   charged_tx_fee: string;
@@ -168,6 +196,9 @@ export interface AccountTransaction {
 // Query parameter types
 // ---------------------------------------------------------------------------
 
+/**
+ * Query parameters for listing accounts.
+ */
 export interface AccountListParams {
   'account.id'?: string | OperatorFilter<string>;
   'account.publickey'?: string;
@@ -176,12 +207,18 @@ export interface AccountListParams {
   order?: Order;
 }
 
+/**
+ * Query parameters for listing an account's tokens.
+ */
 export interface AccountTokensParams {
   'token.id'?: string | OperatorFilter<string>;
   limit?: number;
   order?: Order;
 }
 
+/**
+ * Query parameters for listing an account's NFTs.
+ */
 export interface AccountNftsParams {
   'token.id'?: string | OperatorFilter<string>;
   serialnumber?: number;
@@ -190,18 +227,27 @@ export interface AccountNftsParams {
   order?: Order;
 }
 
+/**
+ * Query parameters for listing an account's staking rewards.
+ */
 export interface AccountRewardsParams {
   timestamp?: string | OperatorFilter<string>;
   limit?: number;
   order?: Order;
 }
 
+/**
+ * Query parameters for listing an account's crypto allowances.
+ */
 export interface AllowanceCryptoParams {
   'spender.id'?: string | OperatorFilter<string>;
   limit?: number;
   order?: Order;
 }
 
+/**
+ * Query parameters for listing an account's token allowances.
+ */
 export interface AllowanceTokenParams {
   'spender.id'?: string | OperatorFilter<string>;
   'token.id'?: string | OperatorFilter<string>;
@@ -209,6 +255,9 @@ export interface AllowanceTokenParams {
   order?: Order;
 }
 
+/**
+ * Query parameters for listing an account's NFT allowances.
+ */
 export interface AllowanceNftParams {
   'account.id'?: string | OperatorFilter<string>;
   'token.id'?: string | OperatorFilter<string>;
@@ -218,6 +267,9 @@ export interface AllowanceNftParams {
   order?: Order;
 }
 
+/**
+ * Query parameters for listing an account's airdrops.
+ */
 export interface AirdropParams {
   'receiver.id'?: string | OperatorFilter<string>;
   'sender.id'?: string | OperatorFilter<string>;
