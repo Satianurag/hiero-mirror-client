@@ -1,0 +1,25 @@
+name: Changeset Check
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'package.json'
+
+jobs:
+  changesets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+      
+      - run: npm ci
+
+      - name: Verify Changeset Exists
+        run: npx changeset status
