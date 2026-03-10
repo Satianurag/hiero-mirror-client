@@ -14,7 +14,7 @@ export interface AccountBalance {
     tokens: TokenBalance[];
 }
 
-// @public (undocumented)
+// @public
 export interface AccountDetail extends AccountSummary {
     // (undocumented)
     links: {
@@ -23,7 +23,7 @@ export interface AccountDetail extends AccountSummary {
     transactions: AccountTransaction[];
 }
 
-// @public (undocumented)
+// @public
 export interface AccountListParams {
     // (undocumented)
     'account.id'?: string | OperatorFilter<string>;
@@ -37,7 +37,7 @@ export interface AccountListParams {
     order?: Order;
 }
 
-// @public (undocumented)
+// @public
 export interface AccountNftsParams {
     // (undocumented)
     'spender.id'?: string | OperatorFilter<string>;
@@ -51,7 +51,7 @@ export interface AccountNftsParams {
     serialnumber?: number;
 }
 
-// @public (undocumented)
+// @public
 export interface AccountRewardsParams {
     // (undocumented)
     limit?: number;
@@ -100,7 +100,7 @@ export interface AccountSummary {
     staked_node_id: number | null;
 }
 
-// @public (undocumented)
+// @public
 export interface AccountTokensParams {
     // (undocumented)
     'token.id'?: string | OperatorFilter<string>;
@@ -110,7 +110,7 @@ export interface AccountTokensParams {
     order?: Order;
 }
 
-// @public (undocumented)
+// @public
 export interface AccountTransaction {
     // (undocumented)
     bytes: string | null;
@@ -154,7 +154,7 @@ export interface AccountTransaction {
     valid_start_timestamp: string;
 }
 
-// @public (undocumented)
+// @public
 export interface Airdrop {
     // (undocumented)
     amount: string;
@@ -173,7 +173,7 @@ export interface Airdrop {
     token_id: string;
 }
 
-// @public (undocumented)
+// @public
 export interface AirdropParams {
     // (undocumented)
     'receiver.id'?: string | OperatorFilter<string>;
@@ -189,7 +189,7 @@ export interface AirdropParams {
     serialnumber?: number;
 }
 
-// @public (undocumented)
+// @public
 export interface AllowanceCryptoParams {
     // (undocumented)
     'spender.id'?: string | OperatorFilter<string>;
@@ -199,7 +199,7 @@ export interface AllowanceCryptoParams {
     order?: Order;
 }
 
-// @public (undocumented)
+// @public
 export interface AllowanceNftParams {
     // (undocumented)
     'account.id'?: string | OperatorFilter<string>;
@@ -212,7 +212,7 @@ export interface AllowanceNftParams {
     owner?: string;
 }
 
-// @public (undocumented)
+// @public
 export interface AllowanceTokenParams {
     // (undocumented)
     'spender.id'?: string | OperatorFilter<string>;
@@ -234,7 +234,7 @@ export interface BalanceEntry {
     tokens: TokenBalance[];
 }
 
-// @public (undocumented)
+// @public
 export interface BalanceListParams {
     // (undocumented)
     'account.balance'?: string | OperatorFilter<string>;
@@ -273,7 +273,7 @@ export interface Block {
     timestamp: TimestampRange;
 }
 
-// @public (undocumented)
+// @public
 export interface BlockListParams {
     'block.number'?: number | string | OperatorFilter<number | string>;
     // (undocumented)
@@ -284,7 +284,7 @@ export interface BlockListParams {
     timestamp?: string | OperatorFilter<string>;
 }
 
-// @public (undocumented)
+// @public
 export interface ChunkInfo {
     // (undocumented)
     initial_transaction_id: {
@@ -299,7 +299,7 @@ export interface ChunkInfo {
     total: number;
 }
 
-// @public (undocumented)
+// @public
 export interface ContractAction {
     // (undocumented)
     call_depth: number;
@@ -352,13 +352,13 @@ export interface ContractCallRequest {
     to: string;
 }
 
-// @public (undocumented)
+// @public
 export interface ContractCallResponse {
     // (undocumented)
     result: string;
 }
 
-// @public (undocumented)
+// @public
 export interface ContractDetail extends ContractSummary {
     // (undocumented)
     bytecode: string;
@@ -366,7 +366,7 @@ export interface ContractDetail extends ContractSummary {
     runtime_bytecode: string;
 }
 
-// @public (undocumented)
+// @public
 export interface ContractListParams {
     // (undocumented)
     'contract.id'?: string | OperatorFilter<string>;
@@ -376,7 +376,7 @@ export interface ContractListParams {
     order?: Order;
 }
 
-// @public (undocumented)
+// @public
 export interface ContractLog {
     // (undocumented)
     address: string;
@@ -403,7 +403,7 @@ export interface ContractLog {
     transaction_index: number;
 }
 
-// @public (undocumented)
+// @public
 export interface ContractLogsParams {
     // (undocumented)
     index?: number | OperatorFilter<number>;
@@ -423,7 +423,7 @@ export interface ContractLogsParams {
     topic3?: string | OperatorFilter<string>;
 }
 
-// @public (undocumented)
+// @public
 export interface ContractResult {
     // (undocumented)
     access_list: string | null;
@@ -496,7 +496,7 @@ export interface ContractResult {
     v: number;
 }
 
-// @public (undocumented)
+// @public
 export interface ContractResultsParams {
     // (undocumented)
     block_hash?: string;
@@ -516,7 +516,7 @@ export interface ContractResultsParams {
     transaction_index?: number;
 }
 
-// @public (undocumented)
+// @public
 export interface ContractStateParams {
     // (undocumented)
     limit?: number;
@@ -528,7 +528,7 @@ export interface ContractStateParams {
     timestamp?: string | OperatorFilter<string>;
 }
 
-// @public (undocumented)
+// @public
 export interface ContractSummary {
     // (undocumented)
     admin_key: HieroKey | null;
@@ -564,7 +564,7 @@ export interface ContractSummary {
     timestamp: TimestampRange;
 }
 
-// @public (undocumented)
+// @public
 export interface CryptoAllowance {
     // (undocumented)
     amount: string;
@@ -581,7 +581,7 @@ export interface CryptoAllowance {
     };
 }
 
-// @public (undocumented)
+// @public
 export interface CustomFees {
     // (undocumented)
     created_timestamp: string;
@@ -593,7 +593,7 @@ export interface CustomFees {
     royalty_fees: RoyaltyFee[];
 }
 
-// @public (undocumented)
+// @public
 export interface ExchangeRate {
     // (undocumented)
     cent_equivalent: number;
@@ -603,7 +603,7 @@ export interface ExchangeRate {
     hbar_equivalent: number;
 }
 
-// @public (undocumented)
+// @public
 export interface ExchangeRateSet {
     // (undocumented)
     current_rate: ExchangeRate;
@@ -613,7 +613,7 @@ export interface ExchangeRateSet {
     timestamp: string;
 }
 
-// @public (undocumented)
+// @public
 export interface Fee {
     // (undocumented)
     gas: string;
@@ -621,7 +621,7 @@ export interface Fee {
     transaction_type: string;
 }
 
-// @public (undocumented)
+// @public
 export interface FeeSchedule {
     // (undocumented)
     current?: Fee[];
@@ -631,7 +631,7 @@ export interface FeeSchedule {
     timestamp: string;
 }
 
-// @public (undocumented)
+// @public
 export interface FixedFee {
     // (undocumented)
     all_collectors_are_exempt: boolean;
@@ -643,7 +643,7 @@ export interface FixedFee {
     denominating_token_id: string | null;
 }
 
-// @public (undocumented)
+// @public
 export interface FractionalFee {
     // (undocumented)
     all_collectors_are_exempt: boolean;
@@ -661,7 +661,7 @@ export interface FractionalFee {
     net_of_transfers: boolean;
 }
 
-// @public (undocumented)
+// @public
 export interface FractionAmount {
     // (undocumented)
     denominator: number;
@@ -827,15 +827,14 @@ export class MirrorNodeClient {
 export interface MirrorNodeClientOptions {
     baseUrl?: string;
     fetch?: typeof globalThis.fetch;
-    // Warning: (ae-forgotten-export) The symbol "Logger$1" needs to be exported by the entry point index.d.ts
-    logger?: Logger$1;
+    logger?: Logger;
     maxRetries?: number;
     network?: HieroNetwork;
     rateLimitRps?: number;
     timeout?: number;
 }
 
-// @public (undocumented)
+// @public
 export interface NetworkFeeParams {
     // (undocumented)
     order?: Order;
@@ -878,7 +877,7 @@ export interface NetworkNode {
     timestamp: TimestampRange;
 }
 
-// @public (undocumented)
+// @public
 export interface NetworkNodeParams {
     // (undocumented)
     'node.id'?: number | OperatorFilter<number>;
@@ -919,13 +918,13 @@ export interface NetworkStake {
     unreserved_staking_reward_balance: string;
 }
 
-// @public (undocumented)
+// @public
 export interface NetworkSupplyParams {
     // (undocumented)
     timestamp?: string | OperatorFilter<string>;
 }
 
-// @public (undocumented)
+// @public
 export interface NftAllowance {
     // (undocumented)
     approved_for_all: boolean;
@@ -1014,13 +1013,18 @@ export interface PaginationLinks {
 }
 
 // @public
-export class Paginator<T> implements PromiseLike<Page<T>>, AsyncIterable<T> {
+export class Paginator<T> implements PromiseLike<Page<T>>, AsyncIterable<T>, AsyncDisposable {
+    // (undocumented)
+    [Symbol.asyncDispose](): Promise<void>;
     // (undocumented)
     [Symbol.asyncIterator](): AsyncIterator<T>;
     constructor(options: PaginatorOptions<T>);
     pages(): AsyncIterable<Page<T>>;
     // (undocumented)
     then<TResult1 = Page<T>, TResult2 = never>(onfulfilled?: ((value: Page<T>) => TResult1 | PromiseLike<TResult1>) | null, onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null): Promise<TResult1 | TResult2>;
+    toArray(options?: {
+        maxItems?: number;
+    }): Promise<T[]>;
 }
 
 // @public
@@ -1029,9 +1033,10 @@ export interface PaginatorOptions<T> {
     extract: PageExtractor<T>;
     params?: Record<string, unknown>;
     path: string;
+    signal?: AbortSignal;
 }
 
-// @public (undocumented)
+// @public
 export interface RoyaltyFee {
     // (undocumented)
     all_collectors_are_exempt: boolean;
@@ -1043,7 +1048,7 @@ export interface RoyaltyFee {
     fallback_fee: FixedFee | null;
 }
 
-// @public (undocumented)
+// @public
 export interface Schedule {
     // (undocumented)
     admin_key: HieroKey | null;
@@ -1071,7 +1076,7 @@ export interface Schedule {
     wait_for_expiry: boolean;
 }
 
-// @public (undocumented)
+// @public
 export interface ScheduleListParams {
     // (undocumented)
     'account.id'?: string | OperatorFilter<string>;
@@ -1083,7 +1088,7 @@ export interface ScheduleListParams {
     order?: Order;
 }
 
-// @public (undocumented)
+// @public
 export interface ScheduleSignature {
     // (undocumented)
     consensus_timestamp: string;
@@ -1095,7 +1100,7 @@ export interface ScheduleSignature {
     type: string;
 }
 
-// @public (undocumented)
+// @public
 export interface ServiceEndpoint {
     // (undocumented)
     domain_name: string;
@@ -1105,7 +1110,7 @@ export interface ServiceEndpoint {
     port: number;
 }
 
-// @public (undocumented)
+// @public
 export interface StakingReward {
     // (undocumented)
     account_id: string;
@@ -1123,7 +1128,7 @@ export interface StakingRewardTransfer {
     amount: string;
 }
 
-// @public (undocumented)
+// @public
 export interface StateChange {
     // (undocumented)
     address: string;
@@ -1136,7 +1141,7 @@ export interface StateChange {
     value_written: string | null;
 }
 
-// @public (undocumented)
+// @public
 export interface Supply {
     // (undocumented)
     released_supply: string;
@@ -1154,7 +1159,7 @@ export interface TimestampRange {
     to: string | null;
 }
 
-// @public (undocumented)
+// @public
 export interface TokenAllowance {
     // (undocumented)
     amount: string;
@@ -1181,7 +1186,7 @@ export interface TokenBalance {
     token_id: string;
 }
 
-// @public (undocumented)
+// @public
 export interface TokenBalanceEntry {
     // (undocumented)
     account: string;
@@ -1191,7 +1196,7 @@ export interface TokenBalanceEntry {
     decimals: string;
 }
 
-// @public (undocumented)
+// @public
 export interface TokenBalanceParams {
     // (undocumented)
     'account.id'?: string | OperatorFilter<string>;
@@ -1203,7 +1208,7 @@ export interface TokenBalanceParams {
     timestamp?: string | OperatorFilter<string>;
 }
 
-// @public (undocumented)
+// @public
 export interface TokenBalanceResponse {
     // (undocumented)
     balances: TokenBalanceEntry[];
@@ -1214,7 +1219,7 @@ export interface TokenBalanceResponse {
     timestamp: string | null;
 }
 
-// @public (undocumented)
+// @public
 export interface TokenDetail extends TokenSummary {
     // (undocumented)
     auto_renew_account: string | null;
@@ -1262,7 +1267,7 @@ export interface TokenDetail extends TokenSummary {
     wipe_key: HieroKey | null;
 }
 
-// @public (undocumented)
+// @public
 export interface TokenListParams {
     // (undocumented)
     'account.id'?: string;
@@ -1279,7 +1284,7 @@ export interface TokenListParams {
     type?: TokenType;
 }
 
-// @public (undocumented)
+// @public
 export interface TokenNft {
     // (undocumented)
     account_id: string;
@@ -1301,7 +1306,7 @@ export interface TokenNft {
     token_id: string;
 }
 
-// @public (undocumented)
+// @public
 export interface TokenNftListParams {
     // (undocumented)
     'account.id'?: string | OperatorFilter<string>;
@@ -1312,7 +1317,7 @@ export interface TokenNftListParams {
     serialnumber?: number;
 }
 
-// @public (undocumented)
+// @public
 export interface TokenRelationship {
     // (undocumented)
     automatic_association: boolean;
@@ -1330,7 +1335,7 @@ export interface TokenRelationship {
     token_id: string;
 }
 
-// @public (undocumented)
+// @public
 export interface TokenSummary {
     // (undocumented)
     admin_key: HieroKey | null;
@@ -1362,7 +1367,7 @@ export interface TokenTransfer {
 // @public
 export type TokenType = 'FUNGIBLE_COMMON' | 'NON_FUNGIBLE_UNIQUE';
 
-// @public (undocumented)
+// @public
 export interface TopicInfo {
     // (undocumented)
     admin_key: unknown | null;
@@ -1407,7 +1412,7 @@ export interface TopicMessage {
     topic_id: string;
 }
 
-// @public (undocumented)
+// @public
 export interface TopicMessageParams {
     encoding?: 'base64' | 'utf-8';
     // (undocumented)
@@ -1421,7 +1426,9 @@ export interface TopicMessageParams {
 }
 
 // @public
-export class TopicStream implements AsyncIterable<TopicMessage> {
+export class TopicStream implements AsyncIterable<TopicMessage>, AsyncDisposable {
+    // (undocumented)
+    [Symbol.asyncDispose](): Promise<void>;
     // (undocumented)
     [Symbol.asyncIterator](): AsyncIterator<TopicMessage>;
     constructor(client: HttpClient, topicId: string, options?: TopicStreamOptions);
@@ -1435,7 +1442,7 @@ export interface TopicStreamOptions {
     startTimestamp?: string;
 }
 
-// @public (undocumented)
+// @public
 export interface Transaction {
     // (undocumented)
     bytes: string | null;
@@ -1484,7 +1491,7 @@ export interface TransactionGetParams {
     scheduled?: boolean;
 }
 
-// @public (undocumented)
+// @public
 export interface TransactionListParams {
     // (undocumented)
     'account.id'?: string | OperatorFilter<string>;
@@ -1513,8 +1520,6 @@ export interface Transfer {
 }
 
 // @public
-export const VERSION = "0.0.0";
-
-// (No @packageDocumentation comment for this package)
+export const VERSION: string;
 
 ```

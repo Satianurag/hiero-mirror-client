@@ -23,9 +23,7 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "build": "tsdown",
     "postbuild": "cp dist/index.d.mts dist/index.d.ts && cp dist/utils.d.mts dist/utils.d.ts",
@@ -57,14 +55,7 @@
     "type": "git",
     "url": "git+https://github.com/Satianurag/hiero-mirror-client.git"
   },
-  "keywords": [
-    "hedera",
-    "hiero",
-    "mirror-node",
-    "blockchain",
-    "sdk",
-    "typescript"
-  ],
+  "keywords": ["hedera", "hiero", "mirror-node", "blockchain", "sdk", "typescript"],
   "author": "satianurag",
   "license": "MIT",
   "bugs": {
