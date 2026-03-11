@@ -132,3 +132,7 @@ export interface NetworkFeeParams {
 export interface NetworkSupplyParams {
   timestamp?: string | OperatorFilter<string>;
 }
+
+export interface NetworkExchangeRateParams {
+  timestamp?: string | OperatorFilter<string>;
+}

@@ -11,7 +11,12 @@
  * @packageDocumentation
  */
 
-import { HttpClient, type HttpClientOptions, type Logger } from './http/client.js';
+import {
+  HttpClient,
+  type HttpClientOptions,
+  type Interceptors,
+  type Logger,
+} from './http/client.js';
 import { AccountsResource } from './resources/accounts.js';
 import { BalancesResource } from './resources/balances.js';
 import { BlocksResource } from './resources/blocks.js';
@@ -70,6 +75,9 @@ export interface MirrorNodeClientOptions {
 
   /** Custom `fetch` implementation (for testing or environments without global fetch). */
   fetch?: typeof globalThis.fetch;
+
+  /** Request/response interceptors for custom logic (auth, logging, metrics). */
+  interceptors?: Interceptors;
 }
 
 // ---------------------------------------------------------------------------
@@ -138,6 +146,7 @@ export class MirrorNodeClient {
       rateLimitRps: options.rateLimitRps ?? 50,
       logger: options.logger,
       fetch: options.fetch,
+      interceptors: options.interceptors,
     };
 
     this.httpClient = new HttpClient(httpOptions);

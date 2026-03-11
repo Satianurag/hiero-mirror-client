@@ -24,7 +24,7 @@
   "files": ["dist"],
   "scripts": {
     "build": "tsdown",
-    "postbuild": "cp dist/index.d.mts dist/index.d.ts && cp dist/utils.d.mts dist/utils.d.ts",
+    "postbuild": "node -e \"const v=require('./package.json').version;['dist/index.mjs','dist/index.cjs'].forEach(f=>{const fs=require('fs');fs.writeFileSync(f,fs.readFileSync(f,'utf8').replace('__INJECT_VERSION__',v))})\" && cp dist/index.d.mts dist/index.d.ts && cp dist/utils.d.mts dist/utils.d.ts",
     "check": "biome check .",
     "check:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
@@ -36,7 +36,8 @@
     "generate:spec": "curl -o openapi.yml https://testnet.mirrornode.hedera.com/api/v1/docs/openapi.yml",
     "generate:types": "npx openapi-typescript openapi.yml -o src/generated/types.ts",
     "generate": "npm run generate:spec && npm run generate:types",
-    "check:drift": "npx openapi-typescript openapi.yml -o src/generated/types.ts --check"
+    "check:drift": "npx openapi-typescript openapi.yml -o src/generated/types.ts --check",
+    "docs": "npx typedoc"
   },
   "repository": {
     "type": "git",

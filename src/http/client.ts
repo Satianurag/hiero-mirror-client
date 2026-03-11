@@ -29,6 +29,16 @@ import {
 } from './retry.js';
 import { type QueryParams, buildUrl } from './url-builder.js';
 
+/**
+ * Request/response interceptors for custom logic (auth headers, metrics, logging, etc.).
+ */
+export interface Interceptors {
+  /** Called before each request. Can modify headers or log requests. */
+  beforeRequest?: (url: string, init: RequestInit) => RequestInit | Promise<RequestInit>;
+  /** Called after each successful response. Can inspect or log responses. */
+  afterResponse?: (response: HttpResponse) => HttpResponse | Promise<HttpResponse>;
+}
+
 export interface HttpClientOptions {
   /** Base URL for the mirror node. */
   baseUrl: string;
@@ -42,6 +52,8 @@ export interface HttpClientOptions {
   logger?: Logger;
   /** Custom fetch implementation (for testing). */
   fetch?: typeof globalThis.fetch;
+  /** Request/response interceptors for custom logic. */
+  interceptors?: Interceptors;
 }
 
 export interface Logger {
@@ -78,6 +90,7 @@ export class HttpClient {
   private readonly etagCache: ETagCache;
   private readonly logger: Logger;
   private readonly fetchFn: typeof globalThis.fetch;
+  private readonly interceptors: Interceptors;
 
   constructor(options: HttpClientOptions) {
     this.baseUrl = options.baseUrl;
@@ -87,6 +100,17 @@ export class HttpClient {
     this.etagCache = new ETagCache();
     this.logger = options.logger ?? {};
     this.fetchFn = options.fetch ?? globalThis.fetch.bind(globalThis);
+    this.interceptors = options.interceptors ?? {};
+  }
+
+  /** Returns the base URL for this client. */
+  getBaseUrl(): string {
+    return this.baseUrl;
+  }
+
+  /** Returns the fetch implementation used by this client. */
+  getFetch(): typeof globalThis.fetch {
+    return this.fetchFn;
   }
 
   /**
@@ -164,17 +188,16 @@ export class HttpClient {
         // Rate limiting
         await this.rateLimiter.acquire(options?.signal);
 
-        // Timeout via AbortController
+        // Timeout via AbortSignal.timeout() (Node 20+)
         const timeoutMs = options?.timeout ?? this.timeout;
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+        const timeoutSignal = AbortSignal.timeout(timeoutMs);
 
         // Compose abort signals: user signal + timeout
+        const signals: AbortSignal[] = [timeoutSignal];
         if (options?.signal) {
-          options.signal.addEventListener('abort', () => controller.abort(options.signal?.reason), {
-            once: true,
-          });
+          signals.push(options.signal);
         }
+        const composedSignal = signals.length > 1 ? AbortSignal.any(signals) : signals[0];
 
         try {
           const headers: Record<string, string> = {
@@ -189,22 +212,32 @@ export class HttpClient {
 
           this.logger.debug?.(`[HTTP] ${method} ${url}`, { attempt });
 
-          const response = await this.fetchFn(url, {
+          let fetchInit: RequestInit = {
             method,
             headers,
             body: body !== undefined ? JSON.stringify(body) : undefined,
-            signal: controller.signal,
-          });
+            signal: composedSignal,
+          };
 
-          clearTimeout(timeoutId);
+          // Apply beforeRequest interceptor if provided
+          if (this.interceptors.beforeRequest) {
+            fetchInit = await this.interceptors.beforeRequest(url, fetchInit);
+          }
+
+          const response = await this.fetchFn(url, fetchInit);
+
           return await this.handleResponse<T>(response, url, attempt);
         } catch (error) {
-          clearTimeout(timeoutId);
+          // Check if this was a timeout (AbortSignal.timeout uses TimeoutError)
+          if (error instanceof DOMException && error.name === 'TimeoutError') {
+            throw new HieroTimeoutError(timeoutMs);
+          }
 
-          // Check if this was a timeout
+          // Legacy AbortError from timeout (fallback check)
           if (
             error instanceof DOMException &&
             error.name === 'AbortError' &&
+            timeoutSignal.aborted &&
             !options?.signal?.aborted
           ) {
             throw new HieroTimeoutError(timeoutMs);
@@ -328,11 +361,18 @@ export class HttpClient {
         this.etagCache.set(url, etag, data);
       }
 
-      return {
+      let result: HttpResponse<T> = {
         data,
         status: response.status,
         headers: response.headers,
       };
+
+      // Apply afterResponse interceptor if provided
+      if (this.interceptors.afterResponse) {
+        result = (await this.interceptors.afterResponse(result)) as HttpResponse<T>;
+      }
+
+      return result;
     } catch (cause) {
       throw createParseError(rawBody, response.status, cause);
     }

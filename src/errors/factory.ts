@@ -90,9 +90,17 @@ export function createErrorFromResponse(
       let retryAfter: number | undefined;
       const retryAfterHeader = headers?.get('retry-after');
       if (retryAfterHeader) {
+        // Try parsing as integer (seconds) first
         const parsed = Number.parseInt(retryAfterHeader, 10);
-        if (!Number.isNaN(parsed)) {
+        if (!Number.isNaN(parsed) && String(parsed) === retryAfterHeader.trim()) {
           retryAfter = parsed;
+        } else {
+          // Try parsing as RFC 7231 HTTP-date (e.g. "Sun, 06 Nov 1994 08:49:37 GMT")
+          const dateMs = Date.parse(retryAfterHeader);
+          if (!Number.isNaN(dateMs)) {
+            const deltaSeconds = Math.max(0, Math.ceil((dateMs - Date.now()) / 1000));
+            retryAfter = deltaSeconds;
+          }
         }
       }
       return new HieroRateLimitError(message, { retryAfter, rawBody });

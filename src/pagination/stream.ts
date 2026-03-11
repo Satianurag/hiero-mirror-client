@@ -54,65 +54,82 @@ export class TopicStream implements AsyncIterable<TopicMessage> {
     let cursor = this.options.startTimestamp;
     let currentInterval = this.options.interval;
 
-    while (!this.options.signal?.aborted) {
-      try {
-        const response = await this.client.get<unknown>(
-          `/api/v1/topics/${this.topicId}/messages`,
-          {
-            timestamp: `gt:${cursor}`,
-            limit: String(this.options.limit),
-            order: 'asc',
-          },
-          { signal: this.options.signal },
-        );
+    // Single abort handler registered once (avoids MaxListenersExceededWarning).
+    let sleepResolve: (() => void) | null = null;
+    let sleepTimer: ReturnType<typeof setTimeout> | null = null;
 
-        const raw = response.data as Record<string, unknown>;
-        const messages = Array.isArray(raw.messages) ? raw.messages : [];
+    const onAbort = (): void => {
+      if (sleepTimer !== null) {
+        clearTimeout(sleepTimer);
+        sleepTimer = null;
+      }
+      if (sleepResolve !== null) {
+        sleepResolve();
+        sleepResolve = null;
+      }
+    };
 
-        if (messages.length > 0) {
-          // Active flow — reset interval to minimum.
-          currentInterval = TopicStream.MIN_INTERVAL;
+    this.options.signal?.addEventListener('abort', onAbort, { once: true });
 
-          for (const msg of messages) {
-            const mapped = mapTopicMessage(msg);
-            yield mapped;
-            cursor = mapped.consensus_timestamp;
+    try {
+      while (!this.options.signal?.aborted) {
+        try {
+          const response = await this.client.get<unknown>(
+            `/api/v1/topics/${this.topicId}/messages`,
+            {
+              timestamp: `gt:${cursor}`,
+              limit: String(this.options.limit),
+              order: 'asc',
+            },
+            { signal: this.options.signal },
+          );
+
+          const raw = response.data as Record<string, unknown>;
+          const messages = Array.isArray(raw.messages) ? raw.messages : [];
+
+          if (messages.length > 0) {
+            // Active flow — reset interval to minimum.
+            currentInterval = TopicStream.MIN_INTERVAL;
+
+            for (const msg of messages) {
+              const mapped = mapTopicMessage(msg);
+              yield mapped;
+              cursor = mapped.consensus_timestamp;
+            }
+          } else {
+            // No messages — back off.
+            currentInterval = Math.min(
+              currentInterval * TopicStream.BACKOFF_FACTOR,
+              TopicStream.MAX_INTERVAL,
+            );
           }
-        } else {
-          // No messages — back off.
+        } catch (_error: unknown) {
+          // On abort, exit gracefully.
+          if (this.options.signal?.aborted) return;
+
+          // On network errors, back off and retry.
           currentInterval = Math.min(
-            currentInterval * TopicStream.BACKOFF_FACTOR,
+            currentInterval * TopicStream.BACKOFF_FACTOR * 2,
             TopicStream.MAX_INTERVAL,
           );
         }
-      } catch (_error: unknown) {
-        // On abort, exit gracefully.
-        if (this.options.signal?.aborted) return;
 
-        // On network errors, back off and retry.
-        currentInterval = Math.min(
-          currentInterval * TopicStream.BACKOFF_FACTOR * 2,
-          TopicStream.MAX_INTERVAL,
-        );
+        // Wait before next poll (uses the single registered abort handler).
+        await new Promise<void>((resolve) => {
+          sleepResolve = resolve;
+          sleepTimer = setTimeout(() => {
+            sleepTimer = null;
+            sleepResolve = null;
+            resolve();
+          }, currentInterval);
+        });
       }
-
-      // Wait before next poll.
-      await this.sleep(currentInterval);
+    } finally {
+      // Clean up: remove the abort listener if it hasn't fired yet.
+      this.options.signal?.removeEventListener('abort', onAbort);
+      if (sleepTimer !== null) {
+        clearTimeout(sleepTimer);
+      }
     }
-  }
-
-  private sleep(ms: number): Promise<void> {
-    return new Promise<void>((resolve) => {
-      const timer = setTimeout(resolve, ms);
-      // If the signal aborts, resolve immediately.
-      this.options.signal?.addEventListener(
-        'abort',
-        () => {
-          clearTimeout(timer);
-          resolve();
-        },
-        { once: true },
-      );
-    });
   }
 }

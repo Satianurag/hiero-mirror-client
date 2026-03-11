@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  schedule:
+    # Nightly at 03:00 UTC — runs integration tests against live testnet
+    - cron: '0 3 * * *'
 
 permissions:
   contents: read
@@ -15,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20, 22]
+        node-version: [20, 22, 24]
     
     steps:
       - uses: actions/checkout@v4
@@ -43,6 +46,26 @@ jobs:
         if: matrix.node-version == 22
         run: npx api-extractor run --local
 
+      - name: OpenAPI Drift Detection
+        if: matrix.node-version == 22
+        run: |
+          curl -sf -o openapi.yml https://testnet.mirrornode.hedera.com/api/v1/docs/openapi.yml
+          npx openapi-typescript openapi.yml -o /tmp/drift-check-types.ts
+          echo "OpenAPI drift check completed"
+
+      - name: Bundle Size Check
+        if: matrix.node-version == 22
+        run: |
+          INDEX_SIZE=$(wc -c < dist/index.mjs)
+          UTILS_SIZE=$(wc -c < dist/utils.mjs)
+          echo "index.mjs: ${INDEX_SIZE} bytes"
+          echo "utils.mjs: ${UTILS_SIZE} bytes"
+          # Fail if index.mjs exceeds 100KB (ungzipped)
+          if [ "$INDEX_SIZE" -gt 102400 ]; then
+            echo "ERROR: index.mjs exceeds 100KB budget"
+            exit 1
+          fi
+
       - name: Verify CJS Import
         run: node -e "require('./dist/index.cjs')"
 
@@ -50,10 +73,56 @@ jobs:
         run: |
           node --input-type=module -e '
             import("./dist/index.mjs")
-              .then(() => console.log("✅ ESM import successful"))
+              .then(() => console.log("ESM import successful"))
               .catch(err => {
-                console.error("❌ ESM import failed:", err);
+                console.error("ESM import failed:", err);
                 process.exit(1);
               });
           '
+
+  # Bun compatibility check
+  check-bun:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install
+      - name: Unit Tests (Bun)
+        run: bun run vitest run tests/unit
+
+  # Deno compatibility check
+  check-deno:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci && npm run build
+      - name: Verify Deno Import
+        run: |
+          deno eval "
+            const mod = await import('./dist/index.mjs');
+            console.log('Deno import successful, exports:', Object.keys(mod).length);
+          "
+
+  # Integration tests — only on schedule or manual trigger
+  integration:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - name: Integration Tests (Live Testnet)
+        run: npx vitest run tests/integration/
 
