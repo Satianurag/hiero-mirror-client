@@ -15,8 +15,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20, 22]
-    
+        node-version: [20, 22, 24]
+
     steps:
       - uses: actions/checkout@v4
 
@@ -42,6 +42,25 @@ jobs:
       - name: API Surface Check
         if: matrix.node-version == 22
         run: npx api-extractor run --local
+
+      - name: OpenAPI Drift Detection
+        if: matrix.node-version == 22
+        run: |
+          npm run generate:types
+          npm run generate:spec
+          npm run check:drift
+
+      - name: Bundle Size Check (100KB budget)
+        if: matrix.node-version == 22
+        run: |
+          MAX_SIZE=102400
+          ESM_SIZE=$(wc -c < dist/index.mjs)
+          echo "ESM bundle size: ${ESM_SIZE} bytes"
+          if [ "$ESM_SIZE" -gt "$MAX_SIZE" ]; then
+            echo "ERROR: ESM bundle size (${ESM_SIZE}B) exceeds budget (${MAX_SIZE}B)"
+            exit 1
+          fi
+          echo "Bundle size within budget."
 
       - name: Verify CJS Import
         run: node -e "require('./dist/index.cjs')"
