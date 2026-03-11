@@ -45,7 +45,10 @@ jobs:
 
       - name: OpenAPI Drift Detection
         if: matrix.node-version == 22
-        run: npm run check:drift
+        run: |
+          npm run generate:types
+          npm run generate:spec
+          npm run check:drift
 
       - name: Bundle Size Check (100KB budget)
         if: matrix.node-version == 22
