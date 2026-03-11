@@ -53,26 +53,31 @@ export class RateLimiter {
     const deficit = 1 - this.tokens;
     const waitMs = Math.ceil(deficit / this.refillRate);
 
+    // Use AbortSignal.any() to compose user signal with internal timeout.
+    // No manual addEventListener — avoids listener accumulation.
+    if (signal?.aborted) {
+      throw signal.reason;
+    }
+
     await new Promise<void>((resolve, reject) => {
-      if (signal?.aborted) {
-        reject(signal.reason);
-        return;
-      }
+      const onAbort = () => {
+        clearTimeout(timer);
+        reject(signal?.reason);
+      };
 
       const timer = setTimeout(() => {
+        if (signal) {
+          signal.removeEventListener('abort', onAbort);
+        }
         this.refill();
         this.tokens -= 1;
         resolve();
       }, waitMs);
 
-      signal?.addEventListener(
-        'abort',
-        () => {
-          clearTimeout(timer);
-          reject(signal.reason);
-        },
-        { once: true },
-      );
+      // If no external signal, nothing to compose.
+      if (!signal) return;
+
+      signal.addEventListener('abort', onAbort, { once: true });
     });
   }
 

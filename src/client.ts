@@ -11,7 +11,13 @@
  * @packageDocumentation
  */
 
-import { HttpClient, type HttpClientOptions, type Logger } from './http/client.js';
+import {
+  type AfterResponseHook,
+  type BeforeRequestHook,
+  HttpClient,
+  type HttpClientOptions,
+  type Logger,
+} from './http/client.js';
 import { AccountsResource } from './resources/accounts.js';
 import { BalancesResource } from './resources/balances.js';
 import { BlocksResource } from './resources/blocks.js';
@@ -70,6 +76,12 @@ export interface MirrorNodeClientOptions {
 
   /** Custom `fetch` implementation (for testing or environments without global fetch). */
   fetch?: typeof globalThis.fetch;
+
+  /** Hooks invoked before each HTTP request. */
+  beforeRequest?: BeforeRequestHook[];
+
+  /** Hooks invoked after each HTTP response. */
+  afterResponse?: AfterResponseHook[];
 }
 
 // ---------------------------------------------------------------------------
@@ -138,6 +150,8 @@ export class MirrorNodeClient {
       rateLimitRps: options.rateLimitRps ?? 50,
       logger: options.logger,
       fetch: options.fetch,
+      beforeRequest: options.beforeRequest,
+      afterResponse: options.afterResponse,
     };
 
     this.httpClient = new HttpClient(httpOptions);
@@ -152,5 +166,15 @@ export class MirrorNodeClient {
     this.tokens = new TokensResource(this.httpClient);
     this.topics = new TopicsResource(this.httpClient);
     this.transactions = new TransactionsResource(this.httpClient);
+  }
+
+  /**
+   * Releases all internal resources (caches, in-flight maps).
+   *
+   * Call this when the client is no longer needed to prevent memory leaks
+   * in long-running applications (servers, workers).
+   */
+  destroy(): void {
+    this.httpClient.destroy();
   }
 }

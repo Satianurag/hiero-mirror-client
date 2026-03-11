@@ -102,17 +102,22 @@ export class TopicStream implements AsyncIterable<TopicMessage> {
   }
 
   private sleep(ms: number): Promise<void> {
+    const signal = this.options.signal;
     return new Promise<void>((resolve) => {
-      const timer = setTimeout(resolve, ms);
-      // If the signal aborts, resolve immediately.
-      this.options.signal?.addEventListener(
-        'abort',
-        () => {
-          clearTimeout(timer);
-          resolve();
-        },
-        { once: true },
-      );
+      const onDone = () => {
+        if (signal) {
+          signal.removeEventListener('abort', onAbort);
+        }
+        resolve();
+      };
+
+      const onAbort = () => {
+        clearTimeout(timer);
+        resolve();
+      };
+
+      const timer = setTimeout(onDone, ms);
+      signal?.addEventListener('abort', onAbort, { once: true });
     });
   }
 }

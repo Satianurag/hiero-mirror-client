@@ -24,7 +24,7 @@
   "files": ["dist"],
   "scripts": {
     "build": "tsdown",
-    "postbuild": "cp dist/index.d.mts dist/index.d.ts && cp dist/utils.d.mts dist/utils.d.ts",
+    "postbuild": "node -e \"const fs=require('fs');const p=require('path');for(const f of['index','utils']){const src=p.join('dist',f+'.d.mts');const dst=p.join('dist',f+'.d.ts');if(fs.existsSync(src)){fs.copyFileSync(src,dst);console.log('Copied '+src+' -> '+dst)}else{console.warn('WARN: '+src+' not found')}}\"",
     "check": "biome check .",
     "check:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
@@ -36,7 +36,8 @@
     "generate:spec": "curl -o openapi.yml https://testnet.mirrornode.hedera.com/api/v1/docs/openapi.yml",
     "generate:types": "npx openapi-typescript openapi.yml -o src/generated/types.ts",
     "generate": "npm run generate:spec && npm run generate:types",
-    "check:drift": "npx openapi-typescript openapi.yml -o src/generated/types.ts --check"
+    "check:drift": "npx openapi-typescript openapi.yml -o src/generated/types.ts --check",
+    "docs": "typedoc"
   },
   "repository": {
     "type": "git",
@@ -58,6 +59,7 @@
     "@microsoft/api-extractor": "^7.52.8",
     "openapi-typescript": "^7.6.1",
     "tsdown": "^0.12.5",
+    "typedoc": "^0.28.17",
     "typescript": "^5.7.3",
     "vitest": "^3.1.1"
   }

@@ -15,6 +15,7 @@ import { Paginator, createPageExtractor } from '../pagination/paginator.js';
 import type {
   ExchangeRateSet,
   FeeSchedule,
+  NetworkExchangeRateParams,
   NetworkFeeParams,
   NetworkNode,
   NetworkNodeParams,
@@ -26,8 +27,11 @@ import type {
 export class NetworkResource {
   constructor(private readonly client: HttpClient) {}
 
-  async getExchangeRate(): Promise<ExchangeRateSet> {
-    const response = await this.client.get<unknown>('/api/v1/network/exchangerate');
+  async getExchangeRate(params?: NetworkExchangeRateParams): Promise<ExchangeRateSet> {
+    const response = await this.client.get<unknown>(
+      '/api/v1/network/exchangerate',
+      params as Record<string, string>,
+    );
     return mapExchangeRateSet(response.data);
   }
 
