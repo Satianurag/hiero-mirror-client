@@ -1,0 +1,34 @@
+name: Nightly Integration Tests
+
+on:
+  schedule:
+    # Run every night at 02:00 UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Integration Tests (testnet)
+        run: npx vitest run tests/integration/ --reporter=verbose
+        env:
+          MIRROR_NODE_URL: https://testnet.mirrornode.hedera.com
+        timeout-minutes: 10

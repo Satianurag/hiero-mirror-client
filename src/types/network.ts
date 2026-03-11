@@ -124,6 +124,10 @@ export interface NetworkNodeParams {
   order?: Order;
 }
 
+export interface NetworkExchangeRateParams {
+  timestamp?: string | OperatorFilter<string>;
+}
+
 export interface NetworkFeeParams {
   order?: Order;
   timestamp?: string | OperatorFilter<string>;
