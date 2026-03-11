@@ -49,8 +49,11 @@ export function isRetryableError(error: unknown): boolean {
     // fetch throws TypeError on network failures
     return true;
   }
-  // AbortError (timeout) is NOT retryable — the user's abort takes priority
-  if (error instanceof DOMException && error.name === 'AbortError') {
+  // AbortError (user cancellation) and TimeoutError are NOT retryable
+  if (
+    error instanceof DOMException &&
+    (error.name === 'AbortError' || error.name === 'TimeoutError')
+  ) {
     return false;
   }
   return false;
@@ -99,15 +102,18 @@ export function sleep(ms: number, signal?: AbortSignal): Promise<void> {
       return;
     }
 
-    const timer = setTimeout(resolve, ms);
+    const timer = setTimeout(() => {
+      if (signal) {
+        signal.removeEventListener('abort', onAbort);
+      }
+      resolve();
+    }, ms);
 
-    signal?.addEventListener(
-      'abort',
-      () => {
-        clearTimeout(timer);
-        reject(signal.reason);
-      },
-      { once: true },
-    );
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject(signal?.reason);
+    };
+
+    signal?.addEventListener('abort', onAbort, { once: true });
   });
 }

@@ -2,13 +2,14 @@
  * Core HTTP client for the Hiero Mirror Node SDK.
  *
  * Wraps `fetch` with:
- * - Timeout via `AbortController`
+ * - Timeout via `AbortSignal.timeout()` + `AbortSignal.any()`
  * - Safe JSON parsing (int64 precision)
  * - Error factory integration
  * - Rate limiting
  * - Request deduplication
  * - Retry with exponential backoff
- * - ETag/conditional request support (stubbed for Step 11)
+ * - ETag/conditional request support with LRU eviction
+ * - Request interceptors (beforeRequest / afterResponse)
  *
  * @internal
  */
@@ -16,6 +17,7 @@
 import { HieroNetworkError } from '../errors/HieroNetworkError.js';
 import { HieroTimeoutError } from '../errors/HieroTimeoutError.js';
 import { createErrorFromResponse, createParseError } from '../errors/factory.js';
+import { VERSION } from '../index.js';
 import { ETagCache } from './etag-cache.js';
 import { safeJsonParse } from './json-parser.js';
 import { RateLimiter } from './rate-limiter.js';
@@ -29,6 +31,27 @@ import {
 } from './retry.js';
 import { type QueryParams, buildUrl } from './url-builder.js';
 
+/**
+ * Hook invoked before each HTTP request.
+ * Can modify headers or perform side effects (e.g., logging, auth injection).
+ */
+export type BeforeRequestHook = (request: {
+  method: string;
+  url: string;
+  headers: Record<string, string>;
+}) => void | Promise<void>;
+
+/**
+ * Hook invoked after each HTTP response.
+ * Receives the response metadata (not the parsed body).
+ */
+export type AfterResponseHook = (response: {
+  method: string;
+  url: string;
+  status: number;
+  headers: Headers;
+}) => void | Promise<void>;
+
 export interface HttpClientOptions {
   /** Base URL for the mirror node. */
   baseUrl: string;
@@ -40,8 +63,12 @@ export interface HttpClientOptions {
   rateLimitRps?: number;
   /** Optional logger for debug output. */
   logger?: Logger;
-  /** Custom fetch implementation (for testing). */
+  /** Custom `fetch` implementation (for testing or environments without global fetch). */
   fetch?: typeof globalThis.fetch;
+  /** Hooks invoked before each request. */
+  beforeRequest?: BeforeRequestHook[];
+  /** Hooks invoked after each response. */
+  afterResponse?: AfterResponseHook[];
 }
 
 export interface Logger {
@@ -78,6 +105,8 @@ export class HttpClient {
   private readonly etagCache: ETagCache;
   private readonly logger: Logger;
   private readonly fetchFn: typeof globalThis.fetch;
+  private readonly beforeRequestHooks: BeforeRequestHook[];
+  private readonly afterResponseHooks: AfterResponseHook[];
 
   constructor(options: HttpClientOptions) {
     this.baseUrl = options.baseUrl;
@@ -87,6 +116,17 @@ export class HttpClient {
     this.etagCache = new ETagCache();
     this.logger = options.logger ?? {};
     this.fetchFn = options.fetch ?? globalThis.fetch.bind(globalThis);
+    this.beforeRequestHooks = options.beforeRequest ?? [];
+    this.afterResponseHooks = options.afterResponse ?? [];
+  }
+
+  /**
+   * Clears internal caches and resets state.
+   * Call this when you are done with the client to free resources.
+   */
+  destroy(): void {
+    this.etagCache.clear();
+    this.inflight.clear();
   }
 
   /**
@@ -164,50 +204,63 @@ export class HttpClient {
         // Rate limiting
         await this.rateLimiter.acquire(options?.signal);
 
-        // Timeout via AbortController
+        // Compose abort signals using AbortSignal.any() + AbortSignal.timeout()
         const timeoutMs = options?.timeout ?? this.timeout;
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-        // Compose abort signals: user signal + timeout
+        const signals: AbortSignal[] = [AbortSignal.timeout(timeoutMs)];
         if (options?.signal) {
-          options.signal.addEventListener('abort', () => controller.abort(options.signal?.reason), {
-            once: true,
-          });
+          signals.push(options.signal);
         }
+        const composedSignal = AbortSignal.any(signals);
 
         try {
           const headers: Record<string, string> = {
             Accept: 'application/json',
             'Accept-Encoding': 'gzip',
+            'User-Agent': `hiero-mirror-client/${VERSION}`,
             ...options?.headers,
           };
 
-          if (body !== undefined) {
+          // Only set Content-Type for non-raw bodies
+          if (body !== undefined && !(body instanceof Uint8Array)) {
             headers['Content-Type'] = 'application/json';
+          }
+
+          // Run beforeRequest hooks
+          for (const hook of this.beforeRequestHooks) {
+            await hook({ method, url, headers });
           }
 
           this.logger.debug?.(`[HTTP] ${method} ${url}`, { attempt });
 
+          const serializedBody =
+            body instanceof Uint8Array
+              ? body
+              : body !== undefined
+                ? JSON.stringify(body)
+                : undefined;
+
           const response = await this.fetchFn(url, {
             method,
             headers,
-            body: body !== undefined ? JSON.stringify(body) : undefined,
-            signal: controller.signal,
+            body: serializedBody,
+            signal: composedSignal,
           });
 
-          clearTimeout(timeoutId);
+          // Run afterResponse hooks
+          for (const hook of this.afterResponseHooks) {
+            await hook({ method, url, status: response.status, headers: response.headers });
+          }
+
           return await this.handleResponse<T>(response, url, attempt);
         } catch (error) {
-          clearTimeout(timeoutId);
-
-          // Check if this was a timeout
-          if (
-            error instanceof DOMException &&
-            error.name === 'AbortError' &&
-            !options?.signal?.aborted
-          ) {
+          // Check if this was a timeout (AbortSignal.timeout fires TimeoutError)
+          if (error instanceof DOMException && error.name === 'TimeoutError') {
             throw new HieroTimeoutError(timeoutMs);
+          }
+
+          // Check if this was a user abort
+          if (error instanceof DOMException && error.name === 'AbortError') {
+            throw error;
           }
 
           throw error;

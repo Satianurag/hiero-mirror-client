@@ -6,9 +6,15 @@
  * @packageDocumentation
  */
 
-export const VERSION = '0.0.0';
+/**
+ * SDK version, injected at build time from package.json.
+ * Falls back to 'development' for unbundled/test usage.
+ */
+export const VERSION: string =
+  typeof __HIERO_VERSION__ !== 'undefined' ? __HIERO_VERSION__ : 'development';
 
 export type { HieroNetwork, MirrorNodeClientOptions } from './client.js';
+export type { BeforeRequestHook, AfterResponseHook } from './http/client.js';
 // Client
 export { MirrorNodeClient } from './client.js';
 // Errors (re-export the full hierarchy)
