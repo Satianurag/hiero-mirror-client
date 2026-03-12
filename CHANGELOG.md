@@ -1,5 +1,11 @@
 # @satianurag/hiero-mirror-client
 
+## 0.2.0
+
+### Minor Changes
+
+- d6bd4c0: improvements
+
 ## 0.1.1
 
 ### Patch Changes
