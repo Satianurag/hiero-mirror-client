@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { HttpClient, HttpResponse } from '../../src/http/client.js';
-import { Paginator, createPageExtractor } from '../../src/pagination/paginator.js';
+import { createPageExtractor, Paginator } from '../../src/pagination/paginator.js';
 import type { Page } from '../../src/types/common.js';
 
 /** Creates a mock HttpClient that returns the given responses in sequence. */

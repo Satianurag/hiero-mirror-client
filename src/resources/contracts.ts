@@ -12,7 +12,7 @@ import {
   mapContractResult,
   mapContractSummary,
 } from '../mappers/contract.js';
-import { Paginator, createPageExtractor } from '../pagination/paginator.js';
+import { createPageExtractor, Paginator } from '../pagination/paginator.js';
 import type {
   ContractAction,
   ContractCallRequest,
