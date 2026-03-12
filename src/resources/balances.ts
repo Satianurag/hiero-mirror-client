@@ -5,7 +5,7 @@
 
 import type { HttpClient } from '../http/client.js';
 import { arr, asRecord, strReq } from '../mappers/common.js';
-import { Paginator, createPageExtractor } from '../pagination/paginator.js';
+import { createPageExtractor, Paginator } from '../pagination/paginator.js';
 import type { BalanceEntry, BalanceListParams } from '../types/balances.js';
 import type { TokenBalance } from '../types/common.js';
 

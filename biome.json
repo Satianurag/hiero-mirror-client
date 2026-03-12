@@ -1,7 +1,20 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "organizeImports": {
-    "enabled": true
+  "$schema": "https://biomejs.dev/schemas/2.4.6/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "main"
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": ["**/*.ts", "**/*.json"]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
   },
   "linter": {
     "enabled": true,
@@ -21,11 +34,13 @@
       }
     }
   },
-  "formatter": {
+  "assist": {
     "enabled": true,
-    "indentStyle": "space",
-    "indentWidth": 2,
-    "lineWidth": 100
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
   "javascript": {
     "formatter": {
@@ -34,16 +49,20 @@
       "trailingCommas": "all"
     }
   },
-  "files": {
-    "include": ["**/*.ts", "**/*.json"],
-    "ignore": [
-      "**/node_modules/**",
-      "**/dist/**",
-      "**/src/generated/**",
-      "**/etc/**",
-      "**/*.yml",
-      "**/*.yaml",
-      "**/*.md"
-    ]
-  }
+  "overrides": [
+    {
+      "includes": [
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/src/generated/**",
+        "**/etc/**",
+        "**/*.yml",
+        "**/*.yaml",
+        "**/*.md"
+      ],
+      "linter": { "enabled": false },
+      "formatter": { "enabled": false },
+      "assist": { "enabled": false }
+    }
+  ]
 }

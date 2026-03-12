@@ -14,7 +14,6 @@ export const VERSION: string =
   typeof __HIERO_VERSION__ !== 'undefined' ? __HIERO_VERSION__ : 'development';
 
 export type { HieroNetwork, MirrorNodeClientOptions } from './client.js';
-export type { BeforeRequestHook, AfterResponseHook } from './http/client.js';
 // Client
 export { MirrorNodeClient } from './client.js';
 // Errors (re-export the full hierarchy)
@@ -29,6 +28,7 @@ export {
   HieroTimeoutError,
   HieroValidationError,
 } from './errors/index.js';
+export type { AfterResponseHook, BeforeRequestHook } from './http/client.js';
 export type { PageExtractor, PaginatorOptions } from './pagination/paginator.js';
 // Pagination
 export { Paginator } from './pagination/paginator.js';
