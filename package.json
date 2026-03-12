@@ -37,7 +37,8 @@
     "generate:types": "npx openapi-typescript openapi.yml -o src/generated/types.ts",
     "generate": "npm run generate:spec && npm run generate:types",
     "check:drift": "npx openapi-typescript openapi.yml -o src/generated/types.ts --check",
-    "docs": "typedoc"
+    "docs": "typedoc",
+    "version": "npx changeset version && npm run check:fix"
   },
   "repository": {
     "type": "git",
