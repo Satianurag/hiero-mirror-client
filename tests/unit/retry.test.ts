@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
-  DEFAULT_RETRY_OPTIONS,
   computeRetryDelay,
+  DEFAULT_RETRY_OPTIONS,
   isRetryableError,
   isRetryableStatus,
 } from '../../src/http/retry.js';

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  createErrorFromResponse,
+  createParseError,
   HieroCapabilityError,
   HieroError,
   HieroNetworkError,
@@ -9,8 +11,6 @@ import {
   HieroServerError,
   HieroTimeoutError,
   HieroValidationError,
-  createErrorFromResponse,
-  createParseError,
 } from '../../src/errors/index.js';
 
 // ---------------------------------------------------------------------------

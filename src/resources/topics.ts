@@ -6,7 +6,7 @@
 import type { HttpClient } from '../http/client.js';
 import { asRecord, bool, str, strReq } from '../mappers/common.js';
 import { mapTopicMessage } from '../mappers/topic.js';
-import { Paginator, createPageExtractor } from '../pagination/paginator.js';
+import { createPageExtractor, Paginator } from '../pagination/paginator.js';
 import { TopicStream } from '../pagination/stream.js';
 import type {
   TopicInfo,
