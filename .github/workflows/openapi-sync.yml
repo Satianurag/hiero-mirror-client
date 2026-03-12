@@ -1,0 +1,54 @@
+name: OpenAPI Sync
+
+on:
+  schedule:
+    # Run every Monday at 06:00 UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Fetch latest OpenAPI spec
+        run: npm run generate:spec
+
+      - name: Regenerate TypeScript types
+        run: npm run generate:types
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if git diff --quiet openapi.yml src/generated/types.ts; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Pull Request
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          title: 'chore: sync OpenAPI spec and regenerate types'
+          commit-message: 'chore: sync OpenAPI spec and regenerate types'
+          branch: chore/openapi-sync
+          body: |
+            Automated PR — the upstream Hedera Mirror Node OpenAPI spec has changed.
+
+            This PR updates `openapi.yml` and regenerates `src/generated/types.ts`.
+
+            Please review the type changes and verify that the SDK still compiles.
+          labels: dependencies

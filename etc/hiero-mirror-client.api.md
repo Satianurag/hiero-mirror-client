@@ -154,6 +154,14 @@ export interface AccountTransaction {
     valid_start_timestamp: string;
 }
 
+// @public
+export type AfterResponseHook = (response: {
+    method: string;
+    url: string;
+    status: number;
+    headers: Headers;
+}) => void | Promise<void>;
+
 // @public (undocumented)
 export interface Airdrop {
     // (undocumented)
@@ -249,6 +257,13 @@ export interface BalanceListParams {
     // (undocumented)
     timestamp?: string | OperatorFilter<string>;
 }
+
+// @public
+export type BeforeRequestHook = (request: {
+    method: string;
+    url: string;
+    headers: Record<string, string>;
+}) => void | Promise<void>;
 
 // @public
 export interface Block {
@@ -809,6 +824,7 @@ export class MirrorNodeClient {
     readonly blocks: BlocksResource;
     // Warning: (ae-forgotten-export) The symbol "ContractsResource" needs to be exported by the entry point index.d.ts
     readonly contracts: ContractsResource;
+    destroy(): void;
     // Warning: (ae-forgotten-export) The symbol "HttpClient" needs to be exported by the entry point index.d.ts
     readonly httpClient: HttpClient;
     // Warning: (ae-forgotten-export) The symbol "NetworkResource" needs to be exported by the entry point index.d.ts
@@ -825,7 +841,9 @@ export class MirrorNodeClient {
 
 // @public (undocumented)
 export interface MirrorNodeClientOptions {
+    afterResponse?: AfterResponseHook[];
     baseUrl?: string;
+    beforeRequest?: BeforeRequestHook[];
     fetch?: typeof globalThis.fetch;
     // Warning: (ae-forgotten-export) The symbol "Logger$1" needs to be exported by the entry point index.d.ts
     logger?: Logger$1;
@@ -1513,7 +1531,7 @@ export interface Transfer {
 }
 
 // @public
-export const VERSION = "0.0.0";
+export const VERSION: string;
 
 // (No @packageDocumentation comment for this package)
 
