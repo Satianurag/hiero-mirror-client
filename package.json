@@ -21,7 +21,9 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsdown",
     "postbuild": "node -e \"const fs=require('fs');const p=require('path');for(const f of['index','utils']){const src=p.join('dist',f+'.d.mts');const dst=p.join('dist',f+'.d.ts');if(fs.existsSync(src)){fs.copyFileSync(src,dst);console.log('Copied '+src+' -> '+dst)}else{console.warn('WARN: '+src+' not found')}}\"",
@@ -43,7 +45,14 @@
     "type": "git",
     "url": "git+https://github.com/Satianurag/hiero-mirror-client.git"
   },
-  "keywords": ["hedera", "hiero", "mirror-node", "blockchain", "sdk", "typescript"],
+  "keywords": [
+    "hedera",
+    "hiero",
+    "mirror-node",
+    "blockchain",
+    "sdk",
+    "typescript"
+  ],
   "author": "satianurag",
   "license": "MIT",
   "bugs": {
@@ -56,6 +65,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@microsoft/api-extractor": "^7.52.8",
+    "@types/node": "^22.19.15",
     "@vitest/coverage-v8": "^3.2.4",
     "openapi-typescript": "^7.6.1",
     "tsdown": "^0.21.2",
