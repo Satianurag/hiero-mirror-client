@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { INTEGRATION_TIMEOUT, client } from './setup.js';
+import { client, INTEGRATION_TIMEOUT } from './setup.js';
 
 describe('Contracts Integration', { timeout: INTEGRATION_TIMEOUT }, () => {
   it('should list contracts', async () => {
