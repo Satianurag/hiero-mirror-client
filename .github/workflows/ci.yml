@@ -79,6 +79,14 @@ jobs:
           fi
           echo "Bundle size within budget."
 
+      - name: publint
+        if: matrix.node-version == 22
+        run: npx publint
+
+      - name: Are The Types Wrong
+        if: matrix.node-version == 22
+        run: npx @arethetypeswrong/cli --pack . --profile node16
+
       - name: Verify CJS Import
         run: node -e "require('./dist/index.cjs')"
 
