@@ -37,3 +37,17 @@ export { TopicStream } from './pagination/stream.js';
 
 // Types (re-export everything from barrel)
 export type * from './types/index.js';
+
+// Validation utilities
+export {
+  HieroTimestamp,
+  isValidEntityId,
+  isValidTimestamp,
+  normalizeBlockHash,
+  normalizeEntityId,
+  normalizeTransactionId,
+  validateBlockNumber,
+  validateEvmAddress,
+  validatePublicKey,
+  validateSerialNumber,
+} from './validation/index.js';

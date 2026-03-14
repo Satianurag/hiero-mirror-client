@@ -130,3 +130,30 @@ export function arr<T = unknown>(raw: Record<string, unknown>, key: string): T[]
   const v = raw[key];
   return Array.isArray(v) ? (v as T[]) : [];
 }
+
+// ---------------------------------------------------------------------------
+// Shared domain mappers — used across multiple mapper files
+// ---------------------------------------------------------------------------
+
+import type { HieroKey, TimestampRange } from '../types/common.js';
+
+/**
+ * Maps a raw key object to a typed `HieroKey`.
+ *
+ * @internal
+ */
+export function mapKey(raw: unknown): HieroKey | null {
+  if (raw == null) return null;
+  const r = asRecord(raw);
+  return { _type: strReq(r, '_type'), key: strReq(r, 'key') } as HieroKey;
+}
+
+/**
+ * Maps a raw timestamp range to a typed `TimestampRange`.
+ *
+ * @internal
+ */
+export function mapTimestampRange(raw: unknown): TimestampRange {
+  const r = asRecord(raw);
+  return { from: strReq(r, 'from'), to: str(r, 'to') };
+}

@@ -3,7 +3,6 @@
  * @internal
  */
 
-import type { HieroKey } from '../types/common.js';
 import type {
   CustomFees,
   FixedFee,
@@ -15,13 +14,7 @@ import type {
   TokenNft,
   TokenSummary,
 } from '../types/tokens.js';
-import { arr, asRecord, bool, ensureString, num, str, strReq } from './common.js';
-
-function mapKey(raw: unknown): HieroKey | null {
-  if (raw == null) return null;
-  const r = asRecord(raw);
-  return { _type: strReq(r, '_type'), key: strReq(r, 'key') } as HieroKey;
-}
+import { arr, asRecord, bool, ensureString, mapKey, num, str, strReq } from './common.js';
 
 function mapFractionAmount(raw: unknown): FractionAmount {
   const r = asRecord(raw);

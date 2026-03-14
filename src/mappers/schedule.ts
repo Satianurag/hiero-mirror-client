@@ -3,15 +3,8 @@
  * @internal
  */
 
-import type { HieroKey } from '../types/common.js';
 import type { Schedule, ScheduleSignature } from '../types/schedules.js';
-import { arr, asRecord, bool, str, strReq } from './common.js';
-
-function mapKey(raw: unknown): HieroKey | null {
-  if (raw == null) return null;
-  const r = asRecord(raw);
-  return { _type: strReq(r, '_type'), key: strReq(r, 'key') } as HieroKey;
-}
+import { arr, asRecord, bool, mapKey, str, strReq } from './common.js';
 
 function mapSignature(raw: unknown): ScheduleSignature {
   const r = asRecord(raw);
