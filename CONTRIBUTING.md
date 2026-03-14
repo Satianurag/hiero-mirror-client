@@ -192,7 +192,7 @@ git rebase HEAD~N --signoff
 
 GPG-signed commits provide cryptographic proof of authorship. While not strictly required for every contribution, it is strongly encouraged and required for maintainer commits.
 
-See the [GPG Signing Setup](#gpg-signing-setup) section in the README or follow the [GitHub guide on signing commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits).
+Follow the [GitHub guide on signing commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits) to get started.
 
 Quick setup:
 
