@@ -18,6 +18,7 @@ import { createErrorFromResponse, createParseError } from '../errors/factory.js'
 import { HieroNetworkError } from '../errors/HieroNetworkError.js';
 import { HieroTimeoutError } from '../errors/HieroTimeoutError.js';
 import { VERSION } from '../index.js';
+import type { Logger } from '../types/common.js';
 import { ETagCache } from './etag-cache.js';
 import { safeJsonParse } from './json-parser.js';
 import { RateLimiter } from './rate-limiter.js';
@@ -71,14 +72,7 @@ export interface HttpClientOptions {
   afterResponse?: AfterResponseHook[];
 }
 
-export interface Logger {
-  debug?: (message: string, ...args: unknown[]) => void;
-  info?: (message: string, ...args: unknown[]) => void;
-  warn?: (message: string, ...args: unknown[]) => void;
-  error?: (message: string, ...args: unknown[]) => void;
-}
-
-export interface RequestOptions {
+interface RequestOptions {
   /** Additional headers to send. */
   headers?: Record<string, string>;
   /** Override the default timeout for this request. */

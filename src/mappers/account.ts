@@ -16,17 +16,8 @@ import type {
   TokenAllowance,
   TokenRelationship,
 } from '../types/accounts.js';
-import type { HieroKey, TokenBalance } from '../types/common.js';
-import { arr, asRecord, bool, num, str, strReq } from './common.js';
-
-function mapKey(raw: unknown): HieroKey | null {
-  if (raw == null) return null;
-  const r = asRecord(raw);
-  return {
-    _type: strReq(r, '_type'),
-    key: strReq(r, 'key'),
-  } as HieroKey;
-}
+import type { TokenBalance } from '../types/common.js';
+import { arr, asRecord, bool, mapKey, mapTimestampRange, num, str, strReq } from './common.js';
 
 function mapTokenBalance(raw: unknown): TokenBalance {
   const r = asRecord(raw);
@@ -154,11 +145,6 @@ export function mapStakingReward(raw: unknown): StakingReward {
     amount: strReq(r, 'amount'),
     timestamp: strReq(r, 'timestamp'),
   };
-}
-
-function mapTimestampRange(raw: unknown): { from: string; to: string | null } {
-  const r = asRecord(raw);
-  return { from: strReq(r, 'from'), to: str(r, 'to') };
 }
 
 export function mapCryptoAllowance(raw: unknown): CryptoAllowance {

@@ -3,8 +3,8 @@
  * @internal
  */
 
-import type { ChunkInfo, TopicMessage } from '../types/topics.js';
-import { asRecord, bool, decodeBase64, num, strReq } from './common.js';
+import type { ChunkInfo, TopicInfo, TopicMessage } from '../types/topics.js';
+import { asRecord, bool, decodeBase64, mapTimestampRange, num, str, strReq } from './common.js';
 
 function mapChunkInfo(raw: unknown): ChunkInfo | null {
   if (raw == null) return null;
@@ -27,6 +27,21 @@ function mapChunkInfo(raw: unknown): ChunkInfo | null {
  *
  * EC3/18: Auto-decodes Base64 `message` and `running_hash` to `Uint8Array`.
  */
+export function mapTopicInfo(raw: unknown): TopicInfo {
+  const r = asRecord(raw);
+  return {
+    admin_key: r.admin_key ?? null,
+    auto_renew_account: str(r, 'auto_renew_account'),
+    auto_renew_period: str(r, 'auto_renew_period'),
+    created_timestamp: strReq(r, 'created_timestamp'),
+    deleted: bool(r, 'deleted'),
+    memo: strReq(r, 'memo'),
+    submit_key: r.submit_key ?? null,
+    timestamp: mapTimestampRange(r.timestamp),
+    topic_id: strReq(r, 'topic_id'),
+  };
+}
+
 export function mapTopicMessage(raw: unknown): TopicMessage {
   const r = asRecord(raw);
   const messageStr = strReq(r, 'message');

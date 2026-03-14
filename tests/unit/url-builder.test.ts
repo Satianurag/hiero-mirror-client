@@ -60,9 +60,9 @@ describe('buildUrl', () => {
     expect(url).toContain('account.balance=true');
   });
 
-  // EC64: CamelCase→dot.notation mapping
-  it('maps senderId to sender.id (EC64)', () => {
-    const url = buildUrl(BASE, '/api/v1/transactions', { senderId: '0.0.800' });
+  // Query params are passed through as-is (all SDK param types use dot-notation directly)
+  it('passes dot-notation params through unchanged', () => {
+    const url = buildUrl(BASE, '/api/v1/transactions', { 'sender.id': '0.0.800' });
     expect(url).toContain('sender.id=0.0.800');
   });
 

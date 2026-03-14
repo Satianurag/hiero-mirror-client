@@ -3,7 +3,6 @@
  * @internal
  */
 
-import type { HieroKey, TimestampRange } from '../types/common.js';
 import type {
   ContractAction,
   ContractDetail,
@@ -12,18 +11,17 @@ import type {
   ContractSummary,
   StateChange,
 } from '../types/contracts.js';
-import { arr, asRecord, bool, decodeHexString, num, str, strReq } from './common.js';
-
-function mapKey(raw: unknown): HieroKey | null {
-  if (raw == null) return null;
-  const r = asRecord(raw);
-  return { _type: strReq(r, '_type'), key: strReq(r, 'key') } as HieroKey;
-}
-
-function mapTimestampRange(raw: unknown): TimestampRange {
-  const r = asRecord(raw);
-  return { from: strReq(r, 'from'), to: str(r, 'to') };
-}
+import {
+  arr,
+  asRecord,
+  bool,
+  decodeHexString,
+  mapKey,
+  mapTimestampRange,
+  num,
+  str,
+  strReq,
+} from './common.js';
 
 export function mapContractSummary(raw: unknown): ContractSummary {
   const r = asRecord(raw);
@@ -75,7 +73,7 @@ export function mapContractLog(raw: unknown): ContractLog {
   };
 }
 
-function mapStateChange(raw: unknown): StateChange {
+export function mapStateChange(raw: unknown): StateChange {
   const r = asRecord(raw);
   return {
     address: strReq(r, 'address'),

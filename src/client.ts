@@ -16,7 +16,6 @@ import {
   type BeforeRequestHook,
   HttpClient,
   type HttpClientOptions,
-  type Logger,
 } from './http/client.js';
 import { AccountsResource } from './resources/accounts.js';
 import { BalancesResource } from './resources/balances.js';
@@ -27,6 +26,7 @@ import { SchedulesResource } from './resources/schedules.js';
 import { TokensResource } from './resources/tokens.js';
 import { TopicsResource } from './resources/topics.js';
 import { TransactionsResource } from './resources/transactions.js';
+import type { Logger } from './types/common.js';
 
 // ---------------------------------------------------------------------------
 // Network presets

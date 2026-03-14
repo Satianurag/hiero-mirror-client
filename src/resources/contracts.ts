@@ -11,6 +11,7 @@ import {
   mapContractLog,
   mapContractResult,
   mapContractSummary,
+  mapStateChange,
 } from '../mappers/contract.js';
 import { createPageExtractor, Paginator } from '../pagination/paginator.js';
 import type {
@@ -28,20 +29,20 @@ import type {
   StateChange,
 } from '../types/contracts.js';
 
-function mapStateChange(raw: unknown): StateChange {
-  const r = asRecord(raw);
-  return {
-    address: strReq(r, 'address'),
-    contract_id: strReq(r, 'contract_id'),
-    slot: strReq(r, 'slot'),
-    value_read: strReq(r, 'value_read'),
-    value_written: r.value_written == null ? null : strReq(r, 'value_written'),
-  };
-}
-
 export class ContractsResource {
   constructor(private readonly client: HttpClient) {}
 
+  /**
+   * List contracts with optional filtering.
+   *
+   * @example
+   * ```ts
+   * const page = await client.contracts.list({ limit: 10 }).next();
+   * for (const contract of page.data) {
+   *   console.log(contract.contract_id, contract.evm_address);
+   * }
+   * ```
+   */
   list(params?: ContractListParams): Paginator<ContractSummary> {
     return new Paginator({
       client: this.client,
@@ -51,6 +52,15 @@ export class ContractsResource {
     });
   }
 
+  /**
+   * Get detailed contract information by ID or EVM address.
+   *
+   * @example
+   * ```ts
+   * const contract = await client.contracts.get('0.0.1234');
+   * console.log(contract.contract_id, contract.bytecode);
+   * ```
+   */
   async get(contractIdOrAddress: string): Promise<ContractDetail> {
     const response = await this.client.get<unknown>(
       `/api/v1/contracts/${encodeURIComponent(contractIdOrAddress)}`,
@@ -69,6 +79,17 @@ export class ContractsResource {
     return { result: strReq(r, 'result') };
   }
 
+  /**
+   * List contract results across all contracts.
+   *
+   * @example
+   * ```ts
+   * const page = await client.contracts.getResults().next();
+   * for (const result of page.data) {
+   *   console.log(result.contract_id, result.function_parameters);
+   * }
+   * ```
+   */
   getResults(params?: ContractResultsParams): Paginator<ContractResult> {
     return new Paginator({
       client: this.client,
@@ -115,6 +136,17 @@ export class ContractsResource {
     });
   }
 
+  /**
+   * List contract logs across all contracts.
+   *
+   * @example
+   * ```ts
+   * const page = await client.contracts.getLogs().next();
+   * for (const log of page.data) {
+   *   console.log(log.contract_id, log.data);
+   * }
+   * ```
+   */
   getLogs(params?: ContractLogsParams): Paginator<ContractLog> {
     return new Paginator({
       client: this.client,

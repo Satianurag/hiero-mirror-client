@@ -14,6 +14,7 @@ export {
   mapTokenAllowance,
   mapTokenRelationship,
 } from './account.js';
+export { mapBalanceEntry } from './balance.js';
 export { mapBlock } from './block.js';
 export {
   arr,
@@ -32,6 +33,7 @@ export {
   mapContractLog,
   mapContractResult,
   mapContractSummary,
+  mapStateChange,
 } from './contract.js';
 export {
   mapExchangeRateSet,
@@ -42,5 +44,5 @@ export {
 } from './network.js';
 export { mapSchedule } from './schedule.js';
 export { mapTokenBalanceEntry, mapTokenDetail, mapTokenNft, mapTokenSummary } from './token.js';
-export { mapTopicMessage } from './topic.js';
+export { mapTopicInfo, mapTopicMessage } from './topic.js';
 export { mapNftTransaction, mapTransaction, unwrapTransaction } from './transaction.js';
