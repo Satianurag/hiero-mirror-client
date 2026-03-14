@@ -1,5 +1,14 @@
 # @satianurag/hiero-mirror-client
 
+## [0.2.2](https://github.com/Satianurag/hiero-mirror-client/compare/v0.2.1...v0.2.2) (2026-03-14)
+
+
+### Bug Fixes
+
+* lower coverage thresholds to match unit-test-only CI baseline ([26feaf1](https://github.com/Satianurag/hiero-mirror-client/commit/26feaf18b36cceb35a3989a6e1ef6d4027072061))
+* resolve all 24 audit findings — dead code, duplicates, DX gaps ([0255f45](https://github.com/Satianurag/hiero-mirror-client/commit/0255f45e40c021c1d65bf43effb745ee7992ab67))
+* resolve all 24 audit findings — dead code, duplicates, DX gaps ([e4b1398](https://github.com/Satianurag/hiero-mirror-client/commit/e4b13984d309dd535fb7708d3d2a3b71efde99cf))
+
 ## [0.2.1](https://github.com/Satianurag/hiero-mirror-client/compare/v0.2.0...v0.2.1) (2026-03-12)
 
 
