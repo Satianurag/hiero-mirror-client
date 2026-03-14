@@ -39,6 +39,17 @@ import type { TokenNft } from '../types/tokens.js';
 export class AccountsResource {
   constructor(private readonly client: HttpClient) {}
 
+  /**
+   * List accounts with optional filtering.
+   *
+   * @example
+   * ```ts
+   * const page = await client.accounts.list({ limit: 10 }).next();
+   * for (const account of page.data) {
+   *   console.log(account.account, account.balance.balance);
+   * }
+   * ```
+   */
   list(params?: AccountListParams): Paginator<AccountSummary> {
     return new Paginator({
       client: this.client,
@@ -48,6 +59,15 @@ export class AccountsResource {
     });
   }
 
+  /**
+   * Get detailed account information by ID, alias, or EVM address.
+   *
+   * @example
+   * ```ts
+   * const account = await client.accounts.get('0.0.1234');
+   * console.log(account.balance, account.key);
+   * ```
+   */
   async get(idOrAliasOrEvmAddress: string): Promise<AccountDetail> {
     const response = await this.client.get<unknown>(
       `/api/v1/accounts/${encodeURIComponent(idOrAliasOrEvmAddress)}`,
@@ -55,6 +75,17 @@ export class AccountsResource {
     return mapAccountDetail(response.data);
   }
 
+  /**
+   * List NFTs owned by an account.
+   *
+   * @example
+   * ```ts
+   * const page = await client.accounts.getNFTs('0.0.1234').next();
+   * for (const nft of page.data) {
+   *   console.log(nft.token_id, nft.serial_number);
+   * }
+   * ```
+   */
   getNFTs(idOrAliasOrEvmAddress: string, params?: AccountNftsParams): Paginator<TokenNft> {
     return new Paginator({
       client: this.client,
@@ -64,6 +95,17 @@ export class AccountsResource {
     });
   }
 
+  /**
+   * List token relationships for an account.
+   *
+   * @example
+   * ```ts
+   * const page = await client.accounts.getTokens('0.0.1234').next();
+   * for (const rel of page.data) {
+   *   console.log(rel.token_id, rel.balance);
+   * }
+   * ```
+   */
   getTokens(
     idOrAliasOrEvmAddress: string,
     params?: AccountTokensParams,
@@ -76,6 +118,17 @@ export class AccountsResource {
     });
   }
 
+  /**
+   * List staking rewards for an account.
+   *
+   * @example
+   * ```ts
+   * const page = await client.accounts.getRewards('0.0.1234').next();
+   * for (const reward of page.data) {
+   *   console.log(reward.timestamp, reward.amount);
+   * }
+   * ```
+   */
   getRewards(
     idOrAliasOrEvmAddress: string,
     params?: AccountRewardsParams,

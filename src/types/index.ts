@@ -74,6 +74,7 @@ export type {
   ExchangeRateSet,
   Fee,
   FeeSchedule,
+  NetworkExchangeRateParams,
   NetworkFeeParams,
   NetworkNode,
   NetworkNodeParams,
@@ -110,7 +111,6 @@ export type {
   TopicInfo,
   TopicMessage,
   TopicMessageParams,
-  TopicStreamOptions,
 } from './topics.js';
 // Transaction types
 export type {
