@@ -63,6 +63,10 @@
   ],
   "author": "satianurag",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "bugs": {
     "url": "https://github.com/Satianurag/hiero-mirror-client/issues"
   },

@@ -4,36 +4,23 @@
  */
 
 import type { HttpClient } from '../http/client.js';
-import { asRecord, bool, str, strReq } from '../mappers/common.js';
-import { mapTopicMessage } from '../mappers/topic.js';
+import { mapTopicInfo, mapTopicMessage } from '../mappers/topic.js';
 import { createPageExtractor, Paginator } from '../pagination/paginator.js';
-import { TopicStream } from '../pagination/stream.js';
-import type {
-  TopicInfo,
-  TopicMessage,
-  TopicMessageParams,
-  TopicStreamOptions,
-} from '../types/topics.js';
-
-function mapTopicInfo(raw: unknown): TopicInfo {
-  const r = asRecord(raw);
-  const tsRaw = asRecord(r.timestamp);
-  return {
-    admin_key: r.admin_key ?? null,
-    auto_renew_account: str(r, 'auto_renew_account'),
-    auto_renew_period: str(r, 'auto_renew_period'),
-    created_timestamp: strReq(r, 'created_timestamp'),
-    deleted: bool(r, 'deleted'),
-    memo: strReq(r, 'memo'),
-    submit_key: r.submit_key ?? null,
-    timestamp: { from: strReq(tsRaw, 'from'), to: str(tsRaw, 'to') },
-    topic_id: strReq(r, 'topic_id'),
-  };
-}
+import { TopicStream, type TopicStreamOptions } from '../pagination/stream.js';
+import type { TopicInfo, TopicMessage, TopicMessageParams } from '../types/topics.js';
 
 export class TopicsResource {
   constructor(private readonly client: HttpClient) {}
 
+  /**
+   * Get topic information by ID.
+   *
+   * @example
+   * ```ts
+   * const topic = await client.topics.get('0.0.1234');
+   * console.log(topic.topic_id, topic.memo);
+   * ```
+   */
   async get(topicId: string): Promise<TopicInfo> {
     const response = await this.client.get<unknown>(
       `/api/v1/topics/${encodeURIComponent(topicId)}`,
@@ -41,6 +28,17 @@ export class TopicsResource {
     return mapTopicInfo(response.data);
   }
 
+  /**
+   * List messages for a topic.
+   *
+   * @example
+   * ```ts
+   * const page = await client.topics.getMessages('0.0.1234').next();
+   * for (const msg of page.data) {
+   *   console.log(msg.sequence_number, msg.message);
+   * }
+   * ```
+   */
   getMessages(topicId: string, params?: TopicMessageParams): Paginator<TopicMessage> {
     return new Paginator({
       client: this.client,
@@ -67,6 +65,17 @@ export class TopicsResource {
     return mapTopicMessage(response.data);
   }
 
+  /**
+   * Stream topic messages in real time via long-polling.
+   *
+   * @example
+   * ```ts
+   * const stream = client.topics.stream('0.0.1234');
+   * for await (const msg of stream) {
+   *   console.log(msg.sequence_number, msg.message);
+   * }
+   * ```
+   */
   stream(topicId: string, options?: TopicStreamOptions): TopicStream {
     return new TopicStream(this.client, topicId, options);
   }

@@ -3,7 +3,6 @@
  * @internal
  */
 
-import type { TimestampRange } from '../types/common.js';
 import type {
   ExchangeRate,
   ExchangeRateSet,
@@ -14,12 +13,7 @@ import type {
   ServiceEndpoint,
   Supply,
 } from '../types/network.js';
-import { arr, asRecord, num, str, strReq } from './common.js';
-
-function mapTimestampRange(raw: unknown): TimestampRange {
-  const r = asRecord(raw);
-  return { from: strReq(r, 'from'), to: str(r, 'to') };
-}
+import { arr, asRecord, mapTimestampRange, num, strReq } from './common.js';
 
 function mapServiceEndpoint(raw: unknown): ServiceEndpoint {
   const r = asRecord(raw);
@@ -73,7 +67,7 @@ export function mapNetworkStake(raw: unknown): NetworkStake {
   };
 }
 
-export function mapExchangeRate(raw: unknown): ExchangeRate {
+function mapExchangeRate(raw: unknown): ExchangeRate {
   const r = asRecord(raw);
   return {
     cent_equivalent: num(r, 'cent_equivalent'),

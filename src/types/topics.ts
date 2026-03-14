@@ -70,14 +70,3 @@ export interface TopicMessageParams {
   sequencenumber?: number | OperatorFilter<number>;
   timestamp?: string | OperatorFilter<string>;
 }
-
-export interface TopicStreamOptions {
-  /** Starting timestamp cursor. Default: `'now'`. */
-  startTimestamp?: string;
-  /** Polling interval in ms. Default: adaptive (500–5000ms). */
-  interval?: number;
-  /** Limit per poll request. Default: 100. */
-  limit?: number;
-  /** AbortSignal for cancellation. */
-  signal?: AbortSignal;
-}

@@ -7,12 +7,12 @@ const MAX_URL_LENGTH = 4096;
  * Operator types supported by the Mirror Node API query parameters.
  * Used with `.append()` for multi-value/range queries: `timestamp=gt:1234`.
  */
-export type QueryOperator = 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte';
+type QueryOperator = 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte';
 
 /**
  * A query parameter value with an optional operator prefix.
  */
-export interface OperatorValue {
+interface OperatorValue {
   operator: QueryOperator;
   value: string | number;
 }
@@ -20,7 +20,7 @@ export interface OperatorValue {
 /**
  * Raw query parameter types accepted by the URL builder.
  */
-export type QueryParamValue =
+type QueryParamValue =
   | string
   | number
   | boolean
@@ -31,27 +31,6 @@ export type QueryParamValue =
 
 export interface QueryParams {
   [key: string]: QueryParamValue;
-}
-
-/**
- * Mapping of SDK-friendly camelCase parameter names to the dot-notation
- * parameter names expected by the Mirror Node API (EC64).
- */
-const PARAM_NAME_MAP: Record<string, string> = {
-  senderId: 'sender.id',
-  receiverId: 'receiver.id',
-  accountId: 'account.id',
-  tokenId: 'token.id',
-  nodeId: 'node.id',
-  scheduleId: 'schedule.id',
-  nonce: 'nonce',
-};
-
-/**
- * Resolves a parameter name through the camelCase→dot.notation map.
- */
-function resolveParamName(name: string): string {
-  return PARAM_NAME_MAP[name] ?? name;
 }
 
 /**
@@ -98,21 +77,19 @@ export function buildUrl(baseUrl: string, path: string, params?: QueryParams): s
         continue;
       }
 
-      const resolvedKey = resolveParamName(key);
-
       if (typeof value === 'object' && 'operator' in value) {
         // Single operator value: timestamp=gt:1234
-        url.searchParams.append(resolvedKey, `${value.operator}:${value.value}`);
+        url.searchParams.append(key, `${value.operator}:${value.value}`);
       } else if (Array.isArray(value)) {
         // Array of operator values: multiple operator params
         for (const item of value) {
           if (typeof item === 'object' && 'operator' in item) {
-            url.searchParams.append(resolvedKey, `${item.operator}:${item.value}`);
+            url.searchParams.append(key, `${item.operator}:${item.value}`);
           }
         }
       } else {
         // Scalar value: limit=10 (uses set to enforce last-wins, EC42)
-        url.searchParams.set(resolvedKey, String(value));
+        url.searchParams.set(key, String(value));
       }
     }
   }

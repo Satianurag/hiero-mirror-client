@@ -18,6 +18,17 @@ import type {
 export class TransactionsResource {
   constructor(private readonly client: HttpClient) {}
 
+  /**
+   * List transactions with optional filtering.
+   *
+   * @example
+   * ```ts
+   * const page = await client.transactions.list({ limit: 10 }).next();
+   * for (const tx of page.data) {
+   *   console.log(tx.transaction_id, tx.result);
+   * }
+   * ```
+   */
   list(params?: TransactionListParams): Paginator<Transaction> {
     return new Paginator({
       client: this.client,

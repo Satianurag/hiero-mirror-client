@@ -14,13 +14,13 @@
  * @packageDocumentation
  */
 
-export interface ETagEntry {
+interface ETagEntry {
   etag: string;
   body: unknown;
   createdAt: number;
 }
 
-export interface ETagCacheOptions {
+interface ETagCacheOptions {
   /** Maximum number of entries. Default: 500. */
   maxSize?: number;
   /** Time-to-live in milliseconds. Default: 300_000 (5 minutes). */
