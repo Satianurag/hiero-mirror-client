@@ -6,14 +6,14 @@ Built for precision, type safety, and developer ergonomics — no silent data co
 
 ## Features
 
-- **Full API coverage** — 47 methods across 9 resource groups
+- **Full API coverage** — 46 methods across 9 resource groups
 - **Safe JSON parsing** — int64 values preserved as strings (no precision loss)
 - **Three pagination patterns** — `await`, `for await...of`, `.pages()`
 - **Adaptive HCS streaming** — topic message polling with auto-backoff
 - **ETag caching** — automatic conditional requests with `If-None-Match`
 - **Typed errors** — structured error hierarchy (`HieroNotFoundError`, `HieroRateLimitError`, etc.)
 - **Dual output** — ESM + CJS with full `.d.ts` declarations
-- **Zero platform dependencies** — works in Node.js 18+, Deno, Bun, and browsers
+- **Zero platform dependencies** — works in Node.js 22+, Deno, Bun, and browsers
 
 ## Installation
 
@@ -127,8 +127,8 @@ const client = new MirrorNodeClient({
 | `accounts` | 10 | list, get, NFTs, tokens, rewards, allowances, airdrops |
 | `balances` | 1 | list |
 | `blocks` | 2 | list, get |
-| `contracts` | 12 | list, get, call (POST), results, actions, logs, state |
-| `network` | 6 | exchangeRate, fees, nodes, stake, supply |
+| `contracts` | 12 | list, get, call (POST), results, actions, logs, state, opcodes |
+| `network` | 6 | exchangeRate, fees, estimateFees (POST), nodes, stake, supply |
 | `schedules` | 2 | list, get |
 | `tokens` | 6 | list, get, balances, NFTs, NFT transactions |
 | `topics` | 5 | get, messages, stream |
@@ -167,6 +167,12 @@ import type {
 
 The SDK automatically preserves precision for all large integer values. Fields like `balance`, `stake`, and `total_supply` that exceed `Number.MAX_SAFE_INTEGER` are returned as strings — never silently truncated.
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, coding guidelines, and the pull request process.
+
+This project uses the [Developer Certificate of Origin (DCO)](https://developercertificate.org/). All commits must be signed off (`git commit -s`).
+
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE) for details.
