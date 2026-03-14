@@ -61,7 +61,7 @@ export interface AccountRewardsParams {
     timestamp?: string | OperatorFilter<string>;
 }
 
-// @public
+// @public (undocumented)
 export interface AccountSummary {
     // (undocumented)
     account: string;
@@ -816,26 +816,26 @@ export interface Logger {
 // @public
 export class MirrorNodeClient {
     constructor(options?: MirrorNodeClientOptions);
-    // Warning: (ae-forgotten-export) The symbol "AccountsResource" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "AccountsResource" needs to be exported by the entry point index.d.mts
     readonly accounts: AccountsResource;
-    // Warning: (ae-forgotten-export) The symbol "BalancesResource" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "BalancesResource" needs to be exported by the entry point index.d.mts
     readonly balances: BalancesResource;
-    // Warning: (ae-forgotten-export) The symbol "BlocksResource" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "BlocksResource" needs to be exported by the entry point index.d.mts
     readonly blocks: BlocksResource;
-    // Warning: (ae-forgotten-export) The symbol "ContractsResource" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "ContractsResource" needs to be exported by the entry point index.d.mts
     readonly contracts: ContractsResource;
     destroy(): void;
-    // Warning: (ae-forgotten-export) The symbol "HttpClient" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "HttpClient" needs to be exported by the entry point index.d.mts
     readonly httpClient: HttpClient;
-    // Warning: (ae-forgotten-export) The symbol "NetworkResource" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "NetworkResource" needs to be exported by the entry point index.d.mts
     readonly network: NetworkResource;
-    // Warning: (ae-forgotten-export) The symbol "SchedulesResource" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "SchedulesResource" needs to be exported by the entry point index.d.mts
     readonly schedules: SchedulesResource;
-    // Warning: (ae-forgotten-export) The symbol "TokensResource" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "TokensResource" needs to be exported by the entry point index.d.mts
     readonly tokens: TokensResource;
-    // Warning: (ae-forgotten-export) The symbol "TopicsResource" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "TopicsResource" needs to be exported by the entry point index.d.mts
     readonly topics: TopicsResource;
-    // Warning: (ae-forgotten-export) The symbol "TransactionsResource" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "TransactionsResource" needs to be exported by the entry point index.d.mts
     readonly transactions: TransactionsResource;
 }
 
@@ -845,7 +845,7 @@ export interface MirrorNodeClientOptions {
     baseUrl?: string;
     beforeRequest?: BeforeRequestHook[];
     fetch?: typeof globalThis.fetch;
-    // Warning: (ae-forgotten-export) The symbol "Logger$1" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "Logger$1" needs to be exported by the entry point index.d.mts
     logger?: Logger$1;
     maxRetries?: number;
     network?: HieroNetwork;
