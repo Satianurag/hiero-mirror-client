@@ -1,5 +1,13 @@
 # @satianurag/hiero-mirror-client
 
+## [0.3.0](https://github.com/Satianurag/hiero-mirror-client/compare/v0.2.2...v0.3.0) (2026-03-15)
+
+
+### Features
+
+* add DX features — scheduled tx helpers, transaction poller, balance helpers, HBAR utils, MCP tool descriptors ([e7484f2](https://github.com/Satianurag/hiero-mirror-client/commit/e7484f2154cc977520fb207c3b1add1303123af7))
+* add scheduled transaction helpers, transaction poller, balance helpers, HBAR utils, and MCP tool descriptors ([353e428](https://github.com/Satianurag/hiero-mirror-client/commit/353e428197af41642591f81372d9a9f75b85ad47))
+
 ## [0.2.2](https://github.com/Satianurag/hiero-mirror-client/compare/v0.2.1...v0.2.2) (2026-03-14)
 
 
