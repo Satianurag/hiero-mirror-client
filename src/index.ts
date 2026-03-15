@@ -28,17 +28,42 @@ export {
   HieroTimeoutError,
   HieroValidationError,
 } from './errors/index.js';
+export type {
+  DecodedScheduleBody,
+  ExecutionResult,
+  ListSchedulesByAccountOptions,
+  SignatureProgress,
+  WaitForExecutionOptions,
+} from './helpers/scheduled-transactions.js';
+// Helpers
+export {
+  decodeTransactionBody,
+  getSignatureProgress,
+  listSchedulesByAccount,
+  waitForExecution,
+} from './helpers/scheduled-transactions.js';
 export type { AfterResponseHook, BeforeRequestHook } from './http/client.js';
+// MCP tool descriptors
+export type {
+  ToolDescriptor,
+  ToolInputProperty,
+  ToolInputSchema,
+} from './mcp/tool-descriptors.js';
+export { mirrorNodeTools } from './mcp/tool-descriptors.js';
 export type { PageExtractor, PaginatorOptions } from './pagination/paginator.js';
 // Pagination
 export { Paginator } from './pagination/paginator.js';
 export type { TopicStreamOptions } from './pagination/stream.js';
 export { TopicStream } from './pagination/stream.js';
+export type { WaitForTransactionOptions } from './resources/transactions.js';
 
 // Types (re-export everything from barrel)
 export type * from './types/index.js';
 
 // Validation utilities
+// HBAR conversion utilities
+export { formatHbar, hbarToTinybar, tinybarToHbar } from './utils/hbar.js';
+
 export {
   HieroTimestamp,
   isValidEntityId,

@@ -11,6 +11,8 @@
 
 // Encoding utilities
 export { base64ToHex, bytesToHex, hexToBase64, hexToBytes } from './encoding.js';
+// HBAR conversion utilities
+export { formatHbar, hbarToTinybar, tinybarToHbar } from './hbar.js';
 export type { HieroTimestamp } from './timestamp.js';
 // Timestamp utilities
 export {
