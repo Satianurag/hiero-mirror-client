@@ -222,6 +222,7 @@ formatHbar('100000000');      // '1 HBAR'
 const hex = base64ToHex('bZL5Ig==');  // '0x6d92f922'
 
 // Timestamp handling with full nanosecond precision
+// Returns a ParsedTimestamp: { seconds: bigint, nanos: number, toString() }
 const ts = fromString('1710000000.123456789');
 ts.seconds; // 1710000000n (BigInt)
 ts.nanos;   // 123456789
@@ -257,13 +258,16 @@ import type {
   TokenSummary,
   Transaction,
   NetworkStake,
-  // New helper types
+  // Helper types
   WaitForExecutionOptions,
   ExecutionResult,
   SignatureProgress,
   WaitForTransactionOptions,
   ToolDescriptor,
 } from '@satianurag/hiero-mirror-client';
+
+// Utility types from the /utils subpath
+import type { ParsedTimestamp } from '@satianurag/hiero-mirror-client/utils';
 ```
 
 ## Int64 Safety
@@ -278,4 +282,4 @@ This project uses the [Developer Certificate of Origin (DCO)](https://developerc
 
 ## License
 
-MIT — see [LICENSE](LICENSE) for details.
+Apache-2.0 — see [LICENSE](LICENSE) for details.

@@ -62,7 +62,7 @@
     "typescript"
   ],
   "author": "satianurag",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "publishConfig": {
     "access": "public",
     "provenance": true

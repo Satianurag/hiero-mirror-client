@@ -1,5 +1,5 @@
 /**
- * HieroTimestamp — factory methods for Hedera/Hiero timestamps.
+ * ParsedTimestamp — factory methods for Hedera/Hiero timestamps.
  *
  * Hedera timestamps use the format `seconds.nanoseconds`, e.g., `1710000000.123456789`.
  *
@@ -9,7 +9,7 @@
 /**
  * Represents a Hedera consensus timestamp as `seconds.nanoseconds`.
  */
-export interface HieroTimestamp {
+export interface ParsedTimestamp {
   /** Whole seconds since epoch. */
   readonly seconds: bigint;
   /** Nanosecond component (0–999,999,999). */
@@ -19,7 +19,7 @@ export interface HieroTimestamp {
 }
 
 /**
- * Creates a HieroTimestamp from a `seconds.nanos` string.
+ * Creates a ParsedTimestamp from a `seconds.nanos` string.
  *
  * ```ts
  * const ts = fromString('1710000000.123456789');
@@ -28,7 +28,7 @@ export interface HieroTimestamp {
  * ts.toString() // '1710000000.123456789'
  * ```
  */
-export function fromString(timestamp: string): HieroTimestamp {
+export function fromString(timestamp: string): ParsedTimestamp {
   const dotIndex = timestamp.indexOf('.');
   if (dotIndex === -1) {
     const seconds = BigInt(timestamp);
@@ -46,7 +46,7 @@ export function fromString(timestamp: string): HieroTimestamp {
 }
 
 /**
- * Creates a HieroTimestamp from a JavaScript `Date`.
+ * Creates a ParsedTimestamp from a JavaScript `Date`.
  *
  * Note: JS Date only has millisecond precision. Nanoseconds below ms will be 0.
  *
@@ -54,7 +54,7 @@ export function fromString(timestamp: string): HieroTimestamp {
  * const ts = fromDate(new Date('2024-03-10T00:00:00Z'));
  * ```
  */
-export function fromDate(date: Date): HieroTimestamp {
+export function fromDate(date: Date): ParsedTimestamp {
   const epochMs = date.getTime();
   const seconds = BigInt(Math.floor(epochMs / 1000));
   const nanos = (epochMs % 1000) * 1_000_000;
@@ -62,24 +62,24 @@ export function fromDate(date: Date): HieroTimestamp {
 }
 
 /**
- * Creates a HieroTimestamp for the current moment.
+ * Creates a ParsedTimestamp for the current moment.
  *
  * ```ts
  * const ts = now();
  * ```
  */
-export function now(): HieroTimestamp {
+export function now(): ParsedTimestamp {
   return fromDate(new Date());
 }
 
 /**
- * Creates a HieroTimestamp from separate seconds and nanoseconds.
+ * Creates a ParsedTimestamp from separate seconds and nanoseconds.
  *
  * ```ts
  * const ts = fromParts(1710000000n, 123456789);
  * ```
  */
-export function fromParts(seconds: bigint, nanos: number): HieroTimestamp {
+export function fromParts(seconds: bigint, nanos: number): ParsedTimestamp {
   if (nanos < 0 || nanos > 999_999_999) {
     throw new RangeError(`nanoseconds must be 0..999_999_999, got ${nanos}`);
   }
@@ -87,11 +87,11 @@ export function fromParts(seconds: bigint, nanos: number): HieroTimestamp {
 }
 
 /**
- * Converts a HieroTimestamp to a JavaScript Date.
+ * Converts a ParsedTimestamp to a JavaScript Date.
  *
  * Note: sub-millisecond precision is lost.
  */
-export function toDate(timestamp: HieroTimestamp): Date {
+export function toDate(timestamp: ParsedTimestamp): Date {
   const ms = Number(timestamp.seconds) * 1000 + Math.floor(timestamp.nanos / 1_000_000);
   return new Date(ms);
 }
@@ -99,7 +99,7 @@ export function toDate(timestamp: HieroTimestamp): Date {
 /**
  * Compares two timestamps. Returns -1, 0, or 1.
  */
-export function compare(a: HieroTimestamp, b: HieroTimestamp): -1 | 0 | 1 {
+export function compare(a: ParsedTimestamp, b: ParsedTimestamp): -1 | 0 | 1 {
   if (a.seconds < b.seconds) return -1;
   if (a.seconds > b.seconds) return 1;
   if (a.nanos < b.nanos) return -1;
@@ -111,7 +111,7 @@ export function compare(a: HieroTimestamp, b: HieroTimestamp): -1 | 0 | 1 {
 // Internal
 // ---------------------------------------------------------------------------
 
-function makeTimestamp(seconds: bigint, nanos: number): HieroTimestamp {
+function makeTimestamp(seconds: bigint, nanos: number): ParsedTimestamp {
   return {
     seconds,
     nanos,

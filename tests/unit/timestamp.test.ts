@@ -43,7 +43,7 @@ describe('fromString', () => {
 });
 
 describe('fromDate', () => {
-  it('converts a Date to HieroTimestamp', () => {
+  it('converts a Date to ParsedTimestamp', () => {
     const date = new Date('2024-03-10T00:00:00.000Z');
     const ts = fromDate(date);
     expect(ts.seconds).toBe(BigInt(Math.floor(date.getTime() / 1000)));
@@ -85,7 +85,7 @@ describe('now', () => {
 });
 
 describe('toDate', () => {
-  it('converts HieroTimestamp to Date', () => {
+  it('converts ParsedTimestamp to Date', () => {
     const ts = fromString('1710000000.500000000');
     const date = toDate(ts);
     expect(date.getTime()).toBe(1710000000 * 1000 + 500);

@@ -190,11 +190,11 @@ git rebase HEAD~N --signoff
 
 ## GPG Signing
 
-GPG-signed commits provide cryptographic proof of authorship. While not strictly required for every contribution, it is strongly encouraged and required for maintainer commits.
+**All commits must be GPG-signed.** This provides cryptographic proof of authorship and is required for upstreaming into the Hiero ecosystem.
 
 Follow the [GitHub guide on signing commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits) to get started.
 
-Quick setup:
+### Quick setup
 
 ```bash
 # List your GPG keys
@@ -206,6 +206,25 @@ git config --global user.signingkey KEY_ID
 # Sign commits automatically
 git config --global commit.gpgsign true
 ```
+
+### Verify your setup
+
+After configuring, verify your commits are signed:
+
+```bash
+git log --show-signature -1
+```
+
+You should see `gpg: Good signature from "Your Name <your.email@example.com>"`.
+
+### Branch protection
+
+The `main` branch has branch protection rules that require:
+- All commits to be signed (GPG, SSH, or S/MIME)
+- All status checks to pass
+- Pull request reviews before merging
+
+> **Note:** Unsigned commits will be rejected by GitHub's branch protection. Make sure `commit.gpgsign = true` is set before pushing.
 
 ---
 
