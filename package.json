@@ -1,6 +1,6 @@
 {
   "name": "@satianurag/hiero-mirror-client",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Standalone TypeScript client for the Hedera/Hiero Mirror Node REST API",
   "type": "module",
   "engines": {
