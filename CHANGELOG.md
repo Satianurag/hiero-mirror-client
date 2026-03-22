@@ -1,5 +1,12 @@
 # @satianurag/hiero-mirror-client
 
+## [0.4.0](https://github.com/Satianurag/hiero-mirror-client/compare/v0.3.0...v0.4.0) (2026-03-22)
+
+
+### Features
+
+* add test coverage, fix naming collision, update license and docs ([79ceff4](https://github.com/Satianurag/hiero-mirror-client/commit/79ceff40145afa8008df19c9db46bd21b379b44b))
+
 ## [0.3.0](https://github.com/Satianurag/hiero-mirror-client/compare/v0.2.2...v0.3.0) (2026-03-15)
 
 
