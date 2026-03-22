@@ -38,6 +38,7 @@
       "**/*.json",
       "!**/node_modules",
       "!**/dist",
+      "!**/coverage",
       "!**/src/generated",
       "!**/etc",
       "!**/*.yml",
